@@ -1,0 +1,9 @@
+{% if latest_threads_list %}
+    <ul>
+    {% for threads in latest_threads_list %}
+        <li><a href="{% url 'polls:detail' threads.id %}"> {{ threads.title }} </a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No threads are available.</p>
+{% endif %}

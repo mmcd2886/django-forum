@@ -1,0 +1,16 @@
+{% if post_list %}
+<a href="{% url 'polls:index'%}">Threads</a>
+<ul>
+    {% for posts in post_list %}
+        <li> {{ posts.username }} </li>
+        <li> {{posts.date_time}} </li>
+        <li> {{ posts.replies }} </li>
+        <li> {{ posts.sentiment }} </li>
+        <li> {{posts.score }} </li>
+        <br>
+        <br>
+    {% endfor %}
+</ul>
+{% else %}
+    <p>No posts are available.</p>
+{% endif %}
