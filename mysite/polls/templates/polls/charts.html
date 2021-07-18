@@ -1,0 +1,67 @@
+<!--charts.js tutorial https://simpleisbetterthancomplex.com/tutorial/2020/01/19/how-to-use-chart-js-with-django.html-->
+<!--https://stackoverflow.com/questions/24555823/multiple-chartjs-in-the-same-page/40401048-->
+{% block content %}
+  <h1>Quotes</h1>
+  <div id="container" style="width: 75%;">
+    <canvas id="pie-chart"></canvas>
+  </div>
+<!-- add the charts.js library to page -->
+<!-- create two variables (sentiment_for_quotes, sentiment_for_no_quotes) that will use the data passed from views.py
+pie_chart method to create pie charts using the charts.js lib -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <script>
+    var sentiment_for_quotes = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: {{ sentiment_quotes_data|safe }},
+          backgroundColor: [
+            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
+          ],
+          label: 'Population'
+        }],
+        labels: {{ labels|safe }}
+      },
+      options: {
+        responsive: true
+      }
+    };
+
+
+  </script>
+
+  <h1>No Quotes</h1>
+  <div id="container_2" style="width: 75%;">
+    <canvas id="pie-chart_2"></canvas>
+  </div>
+
+  <script>
+
+    var sentiment_for_no_quotes = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: {{ sentiment_no_quotes_data|safe }},
+          backgroundColor: [
+            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
+          ],
+          label: 'Population'
+        }],
+        labels: {{ labels|safe }}
+      },
+      options: {
+        responsive: true
+      }
+    };
+
+    window.onload = function() {
+      var ctx = document.getElementById('pie-chart').getContext('2d');
+      window.myPie = new Chart(ctx, sentiment_for_quotes);
+
+      var ctx_2 = document.getElementById('pie-chart_2').getContext('2d');
+      window.myPie_2 = new Chart(ctx_2, sentiment_for_no_quotes);
+    };
+
+  </script>
+
+{% endblock %}

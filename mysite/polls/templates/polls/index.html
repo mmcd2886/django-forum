@@ -1,7 +1,10 @@
 {% if latest_threads_list %}
     <ul>
     {% for threads in latest_threads_list %}
+        <!--'url' will point the link to the urls.py file. 'polls:detail' polls indicates
+        the app_name defined urls.py and 'detail' indicates the 'name' of the path defined in urls.py -->
         <li><a href="{% url 'polls:detail' threads.id %}"> {{ threads.title }} </a></li>
+        <li><a href="{% url 'polls:pie_chart' threads.id %}">Charts</a></li>
     {% endfor %}
     </ul>
 {% else %}
