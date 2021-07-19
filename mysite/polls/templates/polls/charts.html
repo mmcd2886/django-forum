@@ -1,9 +1,10 @@
 <!--charts.js tutorial https://simpleisbetterthancomplex.com/tutorial/2020/01/19/how-to-use-chart-js-with-django.html-->
 <!--https://stackoverflow.com/questions/24555823/multiple-chartjs-in-the-same-page/40401048-->
 {% block content %}
-  <h1>Quotes</h1>
+<a href="{% url 'polls:index'%}">Threads</a>
+
   <div id="container" style="width: 75%;">
-    <canvas id="pie-chart"></canvas>
+    <canvas id="sentiment-pie-chart"></canvas>
   </div>
 <!-- add the charts.js library to page -->
 <!-- create two variables (sentiment_for_quotes, sentiment_for_no_quotes) that will use the data passed from views.py
@@ -14,24 +15,30 @@ pie_chart method to create pie charts using the charts.js lib -->
       type: 'pie',
       data: {
         datasets: [{
-          data: {{ sentiment_quotes_data|safe }},
+          data: {{ sentiment_with_quotes_data|safe }},
           backgroundColor: [
-            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
+          "#f38b4a",
+          "#56d798",
+          "#ff8397",
+          "#6970d5"
           ],
           label: 'Sentiment'
         }],
         labels: {{ sentiment_pie_chart_labels|safe }}
       },
       options: {
-        responsive: true
+        responsive: true,
+        title: {
+            display: true,
+            text: 'Sentiment Quotes'
+        }
       }
     };
 
   </script>
-
-  <h1>No Quotes</h1>
+<br>
   <div id="container_2" style="width: 75%;">
-    <canvas id="pie-chart_2"></canvas>
+    <canvas id="sentiment-pie-chart-2"></canvas>
   </div>
 
   <script>
@@ -42,47 +49,68 @@ pie_chart method to create pie charts using the charts.js lib -->
         datasets: [{
           data: {{ sentiment_no_quotes_data|safe }},
           backgroundColor: [
-            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
+          "#f38b4a",
+          "#56d798",
+          "#ff8397",
+          "#6970d5"
           ],
           label: 'Sentiment'
         }],
         labels: {{ sentiment_pie_chart_labels|safe }}
       },
       options: {
-        responsive: true
+        responsive: true,
+        title: {
+            display: true,
+            text: 'Sentiment No Quotes'
+        }
       }
     };
 
       </script>
-
-  <h1>Total Posts</h1>
+<br>
   <div id="container_3" style="width: 75%;">
-    <canvas id="total_posts_bar"></canvas>
+    <canvas id="total_replies_bar"></canvas>
   </div>
 
   <script>
 
-  var total_posts_datetime_bar_chart = {
+  var total_replies_datetime_bar_chart = {
       type: 'bar',
       data: {
         datasets: [{
-          data: {{ total_posts_datetime_bar_chart_data|safe }},
+          data: {{ total_replies_datetime_bar_chart_data|safe }},
           backgroundColor: [
             '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
           ],
-          label: 'Total Posts'
+          label: 'Total Replies'
         }],
-        labels: {{ total_posts_datetime_bar_chart_labels|safe }}
+        labels: {{ total_replies_datetime_bar_chart_labels|safe }}
       },
       options: {
-        responsive: true
+        title: {
+            display: true,
+            text: 'Total Replies'
+         },
+        scales: {
+          responsive: true,
+          yAxes: [{
+            ticks: {
+                //will start the bar chart at zero
+                beginAtZero: true,
+                //precision 0 will for only integers i.e. will not use 1.5
+                precision: 0,
+            }
+          }]
+        }
       }
     };
 
     </script>
-  <h1>Username Posts</h1>
+
+<br>
   <div id="container_4" style="width: 75%;">
-    <canvas id="total_posts_username_bar"></canvas>
+    <canvas id="total_replies_username_bar"></canvas>
   </div>
 
   <script>
@@ -92,18 +120,26 @@ pie_chart method to create pie charts using the charts.js lib -->
       data: {
         datasets: [{
           data: {{ total_replies_by_username_data|safe }},
-          backgroundColor: [
-            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
-          ],
-          label: 'Total Posts'
+          //using a single color without an array[] will cause all bars to be the same color
+          backgroundColor:
+            "#33AEEF",
+          label: 'Total Replies'
         }],
         labels: {{ total_replies_by_username_labels|safe }}
       },
       options: {
+        title: {
+            display: true,
+            text: 'User Total Replies'
+         },
+        responsive: true,
         scales: {
           yAxes: [{
             ticks: {
-                beginAtZero: true
+                //will start the bar chart at zero
+                beginAtZero: true,
+                //precision 0 will for only integers i.e. will not use 1.5
+                precision: 0,
             }
           }]
         }
@@ -111,16 +147,16 @@ pie_chart method to create pie charts using the charts.js lib -->
     };
 
     window.onload = function() {
-      var ctx = document.getElementById('pie-chart').getContext('2d');
+      var ctx = document.getElementById('sentiment-pie-chart').getContext('2d');
       window.myPie = new Chart(ctx, sentiment_for_quotes);
 
-      var ctx_2 = document.getElementById('pie-chart_2').getContext('2d');
+      var ctx_2 = document.getElementById('sentiment-pie-chart-2').getContext('2d');
       window.myPie_2 = new Chart(ctx_2, sentiment_for_no_quotes);
 
-      var ctx_3 = document.getElementById('total_posts_bar').getContext('2d');
-      window.myBar = new Chart(ctx_3, total_posts_datetime_bar_chart);
+      var ctx_3 = document.getElementById('total_replies_bar').getContext('2d');
+      window.myBar = new Chart(ctx_3, total_replies_datetime_bar_chart);
 
-      var ctx_4 = document.getElementById('total_posts_username_bar').getContext('2d');
+      var ctx_4 = document.getElementById('total_replies_username_bar').getContext('2d');
       window.myBar = new Chart(ctx_4, total_replies_username_bar_chart);
     };
 
