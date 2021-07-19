@@ -18,15 +18,14 @@ pie_chart method to create pie charts using the charts.js lib -->
           backgroundColor: [
             '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
           ],
-          label: 'Population'
+          label: 'Sentiment'
         }],
-        labels: {{ labels|safe }}
+        labels: {{ sentiment_pie_chart_labels|safe }}
       },
       options: {
         responsive: true
       }
     };
-
 
   </script>
 
@@ -45,12 +44,69 @@ pie_chart method to create pie charts using the charts.js lib -->
           backgroundColor: [
             '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
           ],
-          label: 'Population'
+          label: 'Sentiment'
         }],
-        labels: {{ labels|safe }}
+        labels: {{ sentiment_pie_chart_labels|safe }}
       },
       options: {
         responsive: true
+      }
+    };
+
+      </script>
+
+  <h1>Total Posts</h1>
+  <div id="container_3" style="width: 75%;">
+    <canvas id="total_posts_bar"></canvas>
+  </div>
+
+  <script>
+
+  var total_posts_datetime_bar_chart = {
+      type: 'bar',
+      data: {
+        datasets: [{
+          data: {{ total_posts_datetime_bar_chart_data|safe }},
+          backgroundColor: [
+            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
+          ],
+          label: 'Total Posts'
+        }],
+        labels: {{ total_posts_datetime_bar_chart_labels|safe }}
+      },
+      options: {
+        responsive: true
+      }
+    };
+
+    </script>
+  <h1>Username Posts</h1>
+  <div id="container_4" style="width: 75%;">
+    <canvas id="total_posts_username_bar"></canvas>
+  </div>
+
+  <script>
+
+  var total_replies_username_bar_chart = {
+      type: 'bar',
+      data: {
+        datasets: [{
+          data: {{ total_replies_by_username_data|safe }},
+          backgroundColor: [
+            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
+          ],
+          label: 'Total Posts'
+        }],
+        labels: {{ total_replies_by_username_labels|safe }}
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+                beginAtZero: true
+            }
+          }]
+        }
       }
     };
 
@@ -60,6 +116,12 @@ pie_chart method to create pie charts using the charts.js lib -->
 
       var ctx_2 = document.getElementById('pie-chart_2').getContext('2d');
       window.myPie_2 = new Chart(ctx_2, sentiment_for_no_quotes);
+
+      var ctx_3 = document.getElementById('total_posts_bar').getContext('2d');
+      window.myBar = new Chart(ctx_3, total_posts_datetime_bar_chart);
+
+      var ctx_4 = document.getElementById('total_posts_username_bar').getContext('2d');
+      window.myBar = new Chart(ctx_4, total_replies_username_bar_chart);
     };
 
   </script>
