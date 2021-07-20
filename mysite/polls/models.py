@@ -1,5 +1,6 @@
-import datetime
+# python3 manage.py dbshell
 
+import datetime
 from django.db import models
 from django.utils import timezone
 
@@ -8,8 +9,9 @@ class Threads(models.Model):
     username = models.CharField(max_length=50)
     date_time = models.DateTimeField(max_length=18)
     replies = models.CharField(max_length=5000)
-    url = models.CharField(max_length=200, unique=True)
+    url = models.CharField(max_length=200)
     title = models.CharField(max_length=1000)
+    last_page_scraped = models.CharField(max_length=5000)
 
     def __str__(self):
         return self.username
@@ -23,6 +25,7 @@ class Posts(models.Model):
     quoted = models.CharField(max_length=8)
     sentiment = models.CharField(max_length=10)
     replies = models.CharField(max_length=10000)
+
     # you can only select one primary key in a Django model. UniqueConstraint allows you to set
     # two unique values (works like a composite key)
 
