@@ -9,7 +9,7 @@ class Threads(models.Model):
     username = models.CharField(max_length=50)
     date_time = models.DateTimeField(max_length=18)
     replies = models.CharField(max_length=5000)
-    url = models.CharField(max_length=200)
+    url = models.CharField(max_length=200, unique=True)
     title = models.CharField(max_length=1000)
     last_page_scraped = models.CharField(max_length=5000)
 

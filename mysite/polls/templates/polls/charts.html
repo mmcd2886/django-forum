@@ -3,13 +3,15 @@
 {% block content %}
 <a href="{% url 'polls:index'%}">Threads</a>
 
-  <div id="container" style="width: 75%;">
-    <canvas id="sentiment-pie-chart"></canvas>
-  </div>
+
 <!-- add the charts.js library to page -->
 <!-- create two variables (sentiment_for_quotes, sentiment_for_no_quotes) that will use the data passed from views.py
 pie_chart method to create pie charts using the charts.js lib -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+<div id="container" style="width: 75%;">
+    <canvas id="sentiment-pie-chart"></canvas>
+  </div>
   <script>
     var sentiment_for_quotes = {
       type: 'pie',
@@ -145,8 +147,45 @@ pie_chart method to create pie charts using the charts.js lib -->
         }
       }
     };
+    </script>
+<br>
+  <div id="container_5" style="width: 75%;">
+    <canvas id="most_frequent_words_bar"></canvas>
+  </div>
 
-    window.onload = function() {
+  <script>
+
+  var most_frequent_words_bar_chart = {
+      type: 'horizontalBar',
+      data: {
+        datasets: [{
+          data: {{ most_frequent_words_sorted_df_data|safe }},
+          //using a single color without an array[] will cause all bars to be the same color
+          backgroundColor:
+            "#33AEEF",
+          label: 'Word Total'
+        }],
+        labels: {{ most_frequent_words_sorted_df_labels|safe }}
+      },
+      options: {
+        title: {
+            display: true,
+            text: 'Most Frequent Words'
+         },
+        responsive: true,
+        scales: {
+          yAxes: [{
+            ticks: {
+                //will start the bar chart at zero
+                beginAtZero: true,
+                //precision 0 will for only integers i.e. will not use 1.5
+                precision: 0,
+            }
+          }]
+        }
+      }
+    };
+      window.onload = function() {
       var ctx = document.getElementById('sentiment-pie-chart').getContext('2d');
       window.myPie = new Chart(ctx, sentiment_for_quotes);
 
@@ -158,6 +197,10 @@ pie_chart method to create pie charts using the charts.js lib -->
 
       var ctx_4 = document.getElementById('total_replies_username_bar').getContext('2d');
       window.myBar = new Chart(ctx_4, total_replies_username_bar_chart);
+
+      var ctx_5 = document.getElementById('most_frequent_words_bar').getContext('2d');
+      window.myBar = new Chart(ctx_5, most_frequent_words_bar_chart);
+
     };
 
   </script>

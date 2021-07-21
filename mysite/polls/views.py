@@ -1,5 +1,8 @@
 import pandas as pd
 from django.shortcuts import get_object_or_404, render
+import nltk
+from nltk.corpus import stopwords
+
 
 from .models import Posts
 from .models import Threads
@@ -67,11 +70,39 @@ def pie_chart(request, thread_id):
     # username. Convert this to a dataframe using .reset_index()
     total_replies_by_username_df = replies_from_thread_df.groupby(["username"]).size().reset_index(name='total replies')
     # Sort the dataframe users most replies to least. Get the top 15 users with most replies
-    total_replies_by_username_df.sort_values(by=['total replies'], inplace=True, ascending=False)
-    total_replies_by_username_df = total_replies_by_username_df.head(15)
+    total_replies_by_username_sorted_df = total_replies_by_username_df.sort_values(by=['total replies'], ascending=False).head(15)
 
-    total_replies_by_username_labels = total_replies_by_username_df['username'].tolist()
-    total_replies_by_username_data = total_replies_by_username_df['total replies'].tolist()
+    total_replies_by_username_labels = total_replies_by_username_sorted_df['username'].tolist()
+    total_replies_by_username_data = total_replies_by_username_sorted_df['total replies'].tolist()
+
+    # Most frequent words bar chart
+    # make everything lower case then tokenize
+    lower_case_replies_info_df = replies_from_thread_df['replies'].str.lower().str.cat(sep=' ')
+    tokenized_replies_list = nltk.tokenize.word_tokenize(lower_case_replies_info_df)
+
+    # remove stop words
+    stop_words = set(stopwords.words('english'))
+    replies_with_no_stop_words_list = []
+    for word in tokenized_replies_list:
+        if word not in stop_words:
+            replies_with_no_stop_words_list.append(word)
+
+    # remove punctuation
+    cleaned_text_list = []
+    for word in replies_with_no_stop_words_list:
+        if word.isalpha():
+            cleaned_text_list.append(word)
+    word_dist = nltk.FreqDist(cleaned_text_list)
+
+    # number of top words to display in matplot
+    most_frequent_words = 20
+    most_frequent_words_df = pd.DataFrame(word_dist.most_common(most_frequent_words), columns=['Word', 'Frequency'])
+
+    # sort from least to greatest otherwise barchart will be upside down
+    most_frequent_words_sorted_df = most_frequent_words_df.sort_values(by=['Frequency'], ascending=False)
+    most_frequent_words_sorted_df_labels = most_frequent_words_sorted_df['Word'].tolist()
+    most_frequent_words_sorted_df_data = most_frequent_words_sorted_df['Frequency'].tolist()
+    print(most_frequent_words_sorted_df)
 
     # Pass the labels and data to charts.html so it can be visualized
     return render(request, 'polls/charts.html', {'sentiment_pie_chart_labels': sentiment_pie_chart_labels,
@@ -80,5 +111,7 @@ def pie_chart(request, thread_id):
                                                  'total_replies_datetime_bar_chart_labels': total_replies_datetime_bar_chart_labels,
                                                  'total_replies_datetime_bar_chart_data': total_replies_datetime_bar_chart_data,
                                                  'total_replies_by_username_labels': total_replies_by_username_labels,
-                                                 'total_replies_by_username_data': total_replies_by_username_data
+                                                 'total_replies_by_username_data': total_replies_by_username_data,
+                                                 'most_frequent_words_sorted_df_labels': most_frequent_words_sorted_df_labels,
+                                                 'most_frequent_words_sorted_df_data': most_frequent_words_sorted_df_data
                                                  })
