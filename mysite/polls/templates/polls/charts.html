@@ -8,7 +8,7 @@
 <!-- create two variables (sentiment_for_quotes, sentiment_for_no_quotes) that will use the data passed from views.py
 pie_chart method to create pie charts using the charts.js lib -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-
+<!--
 <div id="container" style="width: 75%;">
     <canvas id="sentiment-pie-chart"></canvas>
   </div>
@@ -19,10 +19,9 @@ pie_chart method to create pie charts using the charts.js lib -->
         datasets: [{
           data: {{ sentiment_with_quotes_data|safe }},
           backgroundColor: [
-          "#f38b4a",
+          "#FFF9A6",
+          "#FF7F7F",
           "#56d798",
-          "#ff8397",
-          "#6970d5"
           ],
           label: 'Sentiment'
         }],
@@ -39,6 +38,8 @@ pie_chart method to create pie charts using the charts.js lib -->
 
   </script>
 <br>
+-->
+
   <div id="container_2" style="width: 75%;">
     <canvas id="sentiment-pie-chart-2"></canvas>
   </div>
@@ -51,10 +52,9 @@ pie_chart method to create pie charts using the charts.js lib -->
         datasets: [{
           data: {{ sentiment_no_quotes_data|safe }},
           backgroundColor: [
-          "#f38b4a",
+          "#FFF9A6",
+          "#FF7F7F",
           "#56d798",
-          "#ff8397",
-          "#6970d5"
           ],
           label: 'Sentiment'
         }],
@@ -78,14 +78,14 @@ pie_chart method to create pie charts using the charts.js lib -->
   <script>
 
   var total_replies_datetime_bar_chart = {
-      type: 'bar',
+      type: 'line',
       data: {
         datasets: [{
           data: {{ total_replies_datetime_bar_chart_data|safe }},
-          backgroundColor: [
-            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
-          ],
-          label: 'Total Replies'
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1,
+          label: 'Total Replies',
+          fill: 'false'
         }],
         labels: {{ total_replies_datetime_bar_chart_labels|safe }}
       },
@@ -124,7 +124,7 @@ pie_chart method to create pie charts using the charts.js lib -->
           data: {{ total_replies_by_username_data|safe }},
           //using a single color without an array[] will cause all bars to be the same color
           backgroundColor:
-            "#33AEEF",
+            '#fdd835',
           label: 'Total Replies'
         }],
         labels: {{ total_replies_by_username_labels|safe }}
@@ -162,7 +162,7 @@ pie_chart method to create pie charts using the charts.js lib -->
           data: {{ most_frequent_words_sorted_df_data|safe }},
           //using a single color without an array[] will cause all bars to be the same color
           backgroundColor:
-            "#33AEEF",
+            '#90EE90',
           label: 'Word Total'
         }],
         labels: {{ most_frequent_words_sorted_df_labels|safe }}
@@ -174,7 +174,7 @@ pie_chart method to create pie charts using the charts.js lib -->
          },
         responsive: true,
         scales: {
-          yAxes: [{
+          xAxes: [{
             ticks: {
                 //will start the bar chart at zero
                 beginAtZero: true,
@@ -186,8 +186,10 @@ pie_chart method to create pie charts using the charts.js lib -->
       }
     };
       window.onload = function() {
+      /*
       var ctx = document.getElementById('sentiment-pie-chart').getContext('2d');
       window.myPie = new Chart(ctx, sentiment_for_quotes);
+      */
 
       var ctx_2 = document.getElementById('sentiment-pie-chart-2').getContext('2d');
       window.myPie_2 = new Chart(ctx_2, sentiment_for_no_quotes);

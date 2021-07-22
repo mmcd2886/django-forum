@@ -9,7 +9,7 @@ from .models import Threads
 
 
 def index(request):
-    latest_threads_list = Threads.objects.order_by('date_time')[:20]
+    latest_threads_list = Threads.objects.order_by('date_time')[:100]
     context = {'latest_threads_list': latest_threads_list}
     # The render() function takes the request object as its first argument, a template name
     # as its second argument and a dictionary as its optional third argument. It returns an
@@ -102,7 +102,6 @@ def pie_chart(request, thread_id):
     most_frequent_words_sorted_df = most_frequent_words_df.sort_values(by=['Frequency'], ascending=False)
     most_frequent_words_sorted_df_labels = most_frequent_words_sorted_df['Word'].tolist()
     most_frequent_words_sorted_df_data = most_frequent_words_sorted_df['Frequency'].tolist()
-    print(most_frequent_words_sorted_df)
 
     # Pass the labels and data to charts.html so it can be visualized
     return render(request, 'polls/charts.html', {'sentiment_pie_chart_labels': sentiment_pie_chart_labels,
