@@ -2,7 +2,8 @@
 <!--https://stackoverflow.com/questions/24555823/multiple-chartjs-in-the-same-page/40401048-->
 {% block content %}
 <a href="{% url 'polls:index'%}">Threads</a>
-
+<h2> {{ thread_info.title }} </h2>
+<br>
 
 <!-- add the charts.js library to page -->
 <!-- create two variables (sentiment_for_quotes, sentiment_for_no_quotes) that will use the data passed from views.py

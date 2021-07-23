@@ -1,12 +1,18 @@
 {% if post_list %}
 <a href="{% url 'polls:index'%}">Threads</a>
+<h2>{{ thread_info.title }} - {{ thread_info.date_time }}</h2>
+<h3>Pages: {{thread_info.last_page_scraped}}</h3>
+<h3> {{thread_info.username}} </h3>
+<p> {{thread_info.replies}} </p>
 <ul>
     {% for posts in post_list %}
         <li> {{ posts.username }} </li>
-        <li> {{posts.date_time}} </li>
+        <li> {{ posts.date_time }} </li>
+        <li> {{ posts.quoted }} </li>
         <li> {{ posts.replies }} </li>
         <li> {{ posts.sentiment }} </li>
-        <li> {{posts.score }} </li>
+        <li> {{ posts.score }} </li>
+        <li> {{ posts.thread_page }} </li>
         <br>
         <br>
     {% endfor %}

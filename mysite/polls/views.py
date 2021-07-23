@@ -3,7 +3,6 @@ from django.shortcuts import get_object_or_404, render
 import nltk
 from nltk.corpus import stopwords
 
-
 from .models import Posts
 from .models import Threads
 
@@ -19,14 +18,19 @@ def index(request):
 
 def detail(request, thread_id):
     # post = get_object_or_404(Posts, pk=post_id)
+    # get data for the thread so that you can display information for it in charts.html
+    thread_info = Threads.objects.get(id=thread_id)
+    # get the replies from the thread
     post_list = Posts.objects.filter(thread_id=thread_id).order_by('date_time')
-    context = {'post_list': post_list}
+    context = {'post_list': post_list, 'thread_info': thread_info}
     return render(request, 'polls/detail.html', context)
 
 
 # Tutorial for visualizing using charts.js
 # https://simpleisbetterthancomplex.com/tutorial/2020/01/19/how-to-use-chart-js-with-django.html
 def pie_chart(request, thread_id):
+    # get data for the thread so that you can display information for it in charts.html
+    thread_info = Threads.objects.get(id=thread_id)
     # after thread link is clicked, use thread_id to filter replies for only that thread.
     # Convert this returned sql to a dataframe
     # https://stackoverflow.com/questions/11697887/converting-django-queryset-to-pandas-dataframe
@@ -70,7 +74,8 @@ def pie_chart(request, thread_id):
     # username. Convert this to a dataframe using .reset_index()
     total_replies_by_username_df = replies_from_thread_df.groupby(["username"]).size().reset_index(name='total replies')
     # Sort the dataframe users most replies to least. Get the top 15 users with most replies
-    total_replies_by_username_sorted_df = total_replies_by_username_df.sort_values(by=['total replies'], ascending=False).head(15)
+    total_replies_by_username_sorted_df = total_replies_by_username_df.sort_values(by=['total replies'],
+                                                                                   ascending=False).head(15)
 
     total_replies_by_username_labels = total_replies_by_username_sorted_df['username'].tolist()
     total_replies_by_username_data = total_replies_by_username_sorted_df['total replies'].tolist()
@@ -103,14 +108,15 @@ def pie_chart(request, thread_id):
     most_frequent_words_sorted_df_labels = most_frequent_words_sorted_df['Word'].tolist()
     most_frequent_words_sorted_df_data = most_frequent_words_sorted_df['Frequency'].tolist()
 
+    context = {'thread_info': thread_info, 'sentiment_pie_chart_labels': sentiment_pie_chart_labels,
+               'sentiment_with_quotes_data': sentiment_with_quotes_data,
+               'sentiment_no_quotes_data': sentiment_no_quotes_data,
+               'total_replies_datetime_bar_chart_labels': total_replies_datetime_bar_chart_labels,
+               'total_replies_datetime_bar_chart_data': total_replies_datetime_bar_chart_data,
+               'total_replies_by_username_labels': total_replies_by_username_labels,
+               'total_replies_by_username_data': total_replies_by_username_data,
+               'most_frequent_words_sorted_df_labels': most_frequent_words_sorted_df_labels,
+               'most_frequent_words_sorted_df_data': most_frequent_words_sorted_df_data
+               }
     # Pass the labels and data to charts.html so it can be visualized
-    return render(request, 'polls/charts.html', {'sentiment_pie_chart_labels': sentiment_pie_chart_labels,
-                                                 'sentiment_with_quotes_data': sentiment_with_quotes_data,
-                                                 'sentiment_no_quotes_data': sentiment_no_quotes_data,
-                                                 'total_replies_datetime_bar_chart_labels': total_replies_datetime_bar_chart_labels,
-                                                 'total_replies_datetime_bar_chart_data': total_replies_datetime_bar_chart_data,
-                                                 'total_replies_by_username_labels': total_replies_by_username_labels,
-                                                 'total_replies_by_username_data': total_replies_by_username_data,
-                                                 'most_frequent_words_sorted_df_labels': most_frequent_words_sorted_df_labels,
-                                                 'most_frequent_words_sorted_df_data': most_frequent_words_sorted_df_data
-                                                 })
+    return render(request, 'polls/charts.html', context)
