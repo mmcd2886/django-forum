@@ -7,7 +7,7 @@ from django.utils import timezone
 
 # This table has an 'id' column
 class Threads(models.Model):
-    # thread_id = models.AutoField(primary_key=True)
+    thread_id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=50)
     date_time = models.DateTimeField(max_length=18)
     replies = models.CharField(max_length=5000)
@@ -19,11 +19,14 @@ class Threads(models.Model):
         return self.username
 
 
-# This table has a 'thread_id' column foreign keys to 'id' in threads table
+# This table has a 'id' column foreign keys to 'id' in threads table
 class Posts(models.Model):
     username = models.CharField(max_length=50)
     date_time = models.DateTimeField()
-    thread = models.ForeignKey(Threads, on_delete=models.CASCADE)
+    # Django automatically appends '_id' to the end of foreign key column names, that is why I force the name
+    # 'thread_id' using the 'db_column' argument; otherwise it will be thread_id_id. More info here:
+    # https://docs.djangoproject.com/en/dev/ref/models/fields/#database-representation
+    thread_id = models.ForeignKey(Threads, on_delete=models.CASCADE, db_column='thread_id')
     score = models.DecimalField(max_digits=6, decimal_places=4)
     quoted = models.CharField(max_length=8)
     sentiment = models.CharField(max_length=10)

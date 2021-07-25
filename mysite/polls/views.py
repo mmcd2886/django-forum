@@ -19,7 +19,7 @@ def index(request):
 def detail(request, thread_id):
     # post = get_object_or_404(Posts, pk=post_id)
     # get data for the thread so that you can display information for it in charts.html
-    thread_info = Threads.objects.get(id=thread_id)
+    thread_info = Threads.objects.get(thread_id=thread_id)
     # get the replies from the thread
     post_list = Posts.objects.filter(thread_id=thread_id).order_by('date_time')
     context = {'post_list': post_list, 'thread_info': thread_info}
@@ -30,7 +30,7 @@ def detail(request, thread_id):
 # https://simpleisbetterthancomplex.com/tutorial/2020/01/19/how-to-use-chart-js-with-django.html
 def pie_chart(request, thread_id):
     # get data for the thread so that you can display information for it in charts.html
-    thread_info = Threads.objects.get(id=thread_id)
+    thread_info = Threads.objects.get(thread_id=thread_id)
     # after thread link is clicked, use thread_id to filter replies for only that thread.
     # Convert this returned sql to a dataframe
     # https://stackoverflow.com/questions/11697887/converting-django-queryset-to-pandas-dataframe
