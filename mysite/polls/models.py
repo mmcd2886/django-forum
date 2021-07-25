@@ -18,7 +18,6 @@ class Threads(models.Model):
     def __str__(self):
         return self.username
 
-
 # This table has a 'id' column foreign keys to 'id' in threads table
 class Posts(models.Model):
     username = models.CharField(max_length=50)

@@ -1,23 +1,59 @@
-{% if post_list %}
-<a href="{% url 'polls:index'%}">Threads</a>
-<h2>{{ thread_info.title }}</h2>
-<h3>{{ thread_info.date_time }}</h3>
-<h3>Pages: {{ thread_info.last_page_scraped }}</h3>
-<h4> {{ thread_info.username }} </h4>
-<p> {{ thread_info.replies }} </p>
-<ul>
-    {% for posts in post_list %}
-        <li> {{ posts.username }} </li>
-        <li> {{ posts.date_time }} </li>
-        <li> {{ posts.quoted }} </li>
-        <li> {{ posts.replies }} </li>
-        <li> {{ posts.sentiment }} </li>
-        <li> {{ posts.score }} </li>
-        <li> {{ posts.thread_page }} </li>
-        <br>
-        <br>
+
+<!-- this is bootstrap4. may not work with other versions
+https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-django.html-->
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<a href="{% url 'polls:index'%}">Back to Threads List</a>
+
+<div>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+        <th>Username</th>
+        <th>Quoted</th>
+        <th>Reply</th>
+        <th>Sentiment</th>
+        <th>Date</th>
+        <th>Score</th>
+        <th>Page</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for post in posts %}
+      <tr>
+          <td>{{ post.username }}</td>
+          <td>{{ post.quoted }}</td>
+          <td>{{ post.replies }}</td>
+          <td>{{ post.sentiment }}</td>
+          <td>{{ post.date_time }}</td>
+          <td>{{ post.score }}</td>
+          <td>{{ post.thread_page }}</td>
+      </tr>
     {% endfor %}
-</ul>
-{% else %}
-    <p>No posts are available.</p>
-{% endif %}
+  </tbody>
+</table>
+</div>
+
+<div>
+  <ul class="pagination justify-content-center flex-wrap mt-2 mb-4">
+    {% if posts.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled page-item"><span class="page-link">&laquo;</span></li>
+    {% endif %}
+    {% for post in pagination_page_range %}
+      {% if posts.number == post %}
+        <li class="active page-item"><span class="page-link">{{ post }}<span class="sr-only">(current)</span></span></li>
+      {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ post }}">{{ post }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if posts.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ posts.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled page-item"><span class="page-link">&raquo;</span></li>
+    {% endif %}
+  </ul>
+</div>
+

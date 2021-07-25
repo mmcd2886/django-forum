@@ -2,14 +2,29 @@ import pandas as pd
 from django.shortcuts import get_object_or_404, render
 import nltk
 from nltk.corpus import stopwords
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .models import Posts
 from .models import Threads
 
 
 def index(request):
-    latest_threads_list = Threads.objects.order_by('date_time')[:100]
-    context = {'latest_threads_list': latest_threads_list}
+    latest_threads_list = Threads.objects.order_by('date_time')
+    # https://www.geeksforgeeks.org/how-to-add-pagination-in-django-project/
+    # paginator takes list of objects as first argument and number per page as second
+    paginator = Paginator(latest_threads_list, 10)
+    # get the page number from the URL
+    page_number = request.GET.get('page', 1)
+    try:
+        threads = paginator.get_page(page_number)  # returns the desired page object
+    except PageNotAnInteger:
+        # if page_number is not an integer then assign the first page
+        threads = paginator.page(1)
+    except EmptyPage:
+        # if page is empty then return last page
+        threads = page_number.page(paginator.num_pages)
+    # context = {'latest_threads_list': latest_threads_list}
+    context = {'threads': threads}
     # The render() function takes the request object as its first argument, a template name
     # as its second argument and a dictionary as its optional third argument. It returns an
     # HttpResponse object of the given template rendered with the given context.
@@ -17,12 +32,32 @@ def index(request):
 
 
 def detail(request, thread_id):
-    # post = get_object_or_404(Posts, pk=post_id)
     # get data for the thread so that you can display information for it in charts.html
     thread_info = Threads.objects.get(thread_id=thread_id)
     # get the replies from the thread
     post_list = Posts.objects.filter(thread_id=thread_id).order_by('date_time')
-    context = {'post_list': post_list, 'thread_info': thread_info}
+    # get the page number from the URL
+    page_number = request.GET.get('page', 1)
+    # https://www.geeksforgeeks.org/how-to-add-pagination-in-django-project/
+    # paginator takes list of objects as first argument, and number of pages for second
+    paginator = Paginator(post_list, 49)
+    # will use this to prevent every page number from showing in pagination. Will only get numbers on either side of
+    # current page
+    # https: // docs.djangoproject.com / en / 3.2 / ref / paginator /  # django.core.paginator.Paginator.get_elided_page_range
+    # https://nemecek.be/blog/105/how-to-use-elided-pagination-in-django-and-solve-too-many-pages-problem
+    pagination_page_range = paginator.get_elided_page_range(number=page_number)
+
+
+    try:
+        posts = paginator.get_page(page_number)  # returns the desired page object
+    except PageNotAnInteger:
+        # if page_number is not an integer then assign the first page
+        posts = paginator.page(1)
+    except EmptyPage:
+        # if page is empty then return last page
+        posts = page_number.page(paginator.num_pages)
+    context = {'pagination_page_range': pagination_page_range, 'posts': posts, 'thread_info': thread_info}
+
     return render(request, 'polls/detail.html', context)
 
 

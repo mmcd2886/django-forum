@@ -1,9 +1,9 @@
-{% if latest_threads_list %}
+<!--{% if latest_threads_list %}
     <ul>
-    {% for thread in latest_threads_list %}
+    {% for thread in latest_threads_list %} -->
         <!--'url' will point the link to the urls.py file. 'polls:detail' polls indicates
         the app_name defined urls.py and 'detail' indicates the 'name' of the path defined in urls.py -->
-        <li><a href="{% url 'polls:detail' thread.thread_id %}"> {{ thread.title }}</a>
+       <!-- <li><a href="{% url 'polls:detail' thread.thread_id %}"> {{ thread.title }}</a>
             Pages: {{ thread.last_page_scraped }} - Created: {{thread.date_time }}</li>
         <li><a href="{% url 'polls:pie_chart' thread.thread_id %}">Charts</a></li>
         <br>
@@ -11,4 +11,89 @@
     </ul>
 {% else %}
     <p>No threads are available.</p>
+{% endif %}
+-->
+
+
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Paginator example</title>
+</head>
+<body>
+    <div class="container">
+        {% for post in page_obj.object_list %}
+          {# note that the list of posts are in the page_obj.object_list not page_obj #}
+
+            <h1>{{post.title}}</h1>
+            <small>{{post.username}}</small>>
+
+            <hr/>
+         {% endfor %}
+            </div>
+    <center>
+        {%if page_obj.has_previous %} {# whether the previous page exists #}
+            <a href="?page={{page_obj.previous_page_number}}"><</a> {# link to the prev page #}
+        {% endif %}
+        <span>{{page_obj.number}}</span> {# the current page number #}
+
+        {%if page_obj.has_next %} {# whether the next page exists #}
+            <a href="?page={{page_obj.next_page_number}}">></a> {# link to the next page #}
+        {% endif %}
+    </center>
+</body>
+</html>
+-->
+
+<!-- this is bootstrap3. may not work with other versions
+https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-django.html-->
+<head>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Username</th>
+      <th>Pages</th>
+      <th>Created Date</th>
+      <th>Charts</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for thread in threads %}
+      <tr>
+        <td><a href="{% url 'polls:detail' thread.thread_id %}">{{ thread.title }}</a></td>
+        <td>{{ thread.username }}</td>
+        <td>{{ thread.last_page_scraped }}</td>
+        <td>{{ thread.date_time }}</td>
+        <td><a href="{% url 'polls:pie_chart' thread.thread_id %}">Charts</a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if threads.has_other_pages %}
+  <ul pagination>
+    {% if threads.has_previous %}
+      <li><a href="?page={{ threads.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for thread in threads.paginator.page_range %}
+      {% if threads.number == thread %}
+        <li class="active"><span>{{ thread }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ thread }}">{{ thread }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if threads.has_next %}
+      <li><a href="?page={{ threads.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
 {% endif %}
