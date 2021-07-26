@@ -4,7 +4,8 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <!--the table class below uses bootstrap to format the table. The first set of <th> tags are columns names. The following
-<th> tags use django variables that display the data in the specified column names-->
+<td> tags use django variables that display the data in the specified column names. The first set of <td> tags
+ add the thread creators post to the table, all of the other replies are looped through and added to the table.-->
 <a href="{% url 'polls:index'%}">Back to Threads List</a>
 <div>
 <table class="table table-bordered">
@@ -14,12 +15,14 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
         <th>Quoted</th>
         <th>Reply</th>
         <th>Sentiment</th>
-        <th>Date</th>
         <th>Score</th>
+        <th>Date</th>
         <th>Page</th>
     </tr>
   </thead>
   <tbody>
+  <!--Use this if statement to only show the thread creators reply in the table on the first page -->
+    {% if posts.number == 1 %}
        <tr>
           <td>{{ thread_info.username }}</td>
           <td>OP</td>
@@ -29,14 +32,15 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
           <td>N/A</td>
           <td>N/A</td>
       </tr>
+    {% endif %}
     {% for post in posts %}
       <tr>
           <td>{{ post.username }}</td>
           <td>{{ post.quoted }}</td>
           <td>{{ post.replies }}</td>
           <td>{{ post.sentiment }}</td>
-          <td>{{ post.date_time|date:'Y-m-d H:i' }}</td>
           <td>{{ post.score }}</td>
+          <td>{{ post.date_time|date:'Y-m-d H:i' }}</td>
           <td>{{ post.thread_page }}</td>
       </tr>
     {% endfor %}

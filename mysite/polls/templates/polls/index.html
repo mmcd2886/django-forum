@@ -10,8 +10,8 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
   <thead>
     <tr>
       <th>Title</th>
-      <th>Username</th>
       <th>Pages</th>
+      <th>Username</th>
       <th>Created Date</th>
       <th>Charts</th>
     </tr>
@@ -20,8 +20,8 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
     {% for thread in threads %}
       <tr>
         <td><a href="{% url 'polls:detail' thread.thread_id %}">{{ thread.title }}</a></td>
-        <td>{{ thread.username }}</td>
         <td>{{ thread.last_page_scraped }}</td>
+        <td>{{ thread.username }}</td>
         <td>{{ thread.date_time|date:'Y-m-d'  }}</td>
         <td><a href="{% url 'polls:pie_chart' thread.thread_id %}">Charts</a></td>
       </tr>
