@@ -6,6 +6,7 @@ from django.utils import timezone
 
 
 # This table has an 'id' column
+# This model is for the thread title and post by thread creator
 class Threads(models.Model):
     thread_id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=50)
@@ -18,7 +19,9 @@ class Threads(models.Model):
     def __str__(self):
         return self.username
 
+
 # This table has a 'id' column foreign keys to 'id' in threads table
+# This models if for all the replies to a thread
 class Posts(models.Model):
     username = models.CharField(max_length=50)
     date_time = models.DateTimeField()

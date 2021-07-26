@@ -9,12 +9,19 @@ from .models import Threads
 
 
 def index(request):
-    latest_threads_list = Threads.objects.order_by('date_time')
-    # https://www.geeksforgeeks.org/how-to-add-pagination-in-django-project/
-    # paginator takes list of objects as first argument and number per page as second
-    paginator = Paginator(latest_threads_list, 10)
+    # order threads bu date_time
+    threads_list = Threads.objects.order_by('date_time')
     # get the page number from the URL
     page_number = request.GET.get('page', 1)
+    # https://www.geeksforgeeks.org/how-to-add-pagination-in-django-project/
+    # paginator takes list of objects as first argument and number per page as second
+    paginator = Paginator(threads_list, 50)
+    # will use this to prevent every page number from showing in pagination. Will only get numbers on either side of
+    # current page
+    # https: // docs.djangoproject.com / en / 3.2 / ref / paginator /  # django.core.paginator.Paginator.get_elided_page_range
+    # https://nemecek.be/blog/105/how-to-use-elided-pagination-in-django-and-solve-too-many-pages-problem
+    pagination_page_range = paginator.get_elided_page_range(number=page_number)
+
     try:
         threads = paginator.get_page(page_number)  # returns the desired page object
     except PageNotAnInteger:
@@ -23,8 +30,8 @@ def index(request):
     except EmptyPage:
         # if page is empty then return last page
         threads = page_number.page(paginator.num_pages)
-    # context = {'latest_threads_list': latest_threads_list}
-    context = {'threads': threads}
+    context = {'pagination_page_range': pagination_page_range, 'threads': threads}
+
     # The render() function takes the request object as its first argument, a template name
     # as its second argument and a dictionary as its optional third argument. It returns an
     # HttpResponse object of the given template rendered with the given context.
@@ -47,7 +54,6 @@ def detail(request, thread_id):
     # https://nemecek.be/blog/105/how-to-use-elided-pagination-in-django-and-solve-too-many-pages-problem
     pagination_page_range = paginator.get_elided_page_range(number=page_number)
 
-
     try:
         posts = paginator.get_page(page_number)  # returns the desired page object
     except PageNotAnInteger:
@@ -57,7 +63,6 @@ def detail(request, thread_id):
         # if page is empty then return last page
         posts = page_number.page(paginator.num_pages)
     context = {'pagination_page_range': pagination_page_range, 'posts': posts, 'thread_info': thread_info}
-
     return render(request, 'polls/detail.html', context)
 
 

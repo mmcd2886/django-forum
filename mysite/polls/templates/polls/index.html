@@ -1,58 +1,11 @@
-<!--{% if latest_threads_list %}
-    <ul>
-    {% for thread in latest_threads_list %} -->
-        <!--'url' will point the link to the urls.py file. 'polls:detail' polls indicates
-        the app_name defined urls.py and 'detail' indicates the 'name' of the path defined in urls.py -->
-       <!-- <li><a href="{% url 'polls:detail' thread.thread_id %}"> {{ thread.title }}</a>
-            Pages: {{ thread.last_page_scraped }} - Created: {{thread.date_time }}</li>
-        <li><a href="{% url 'polls:pie_chart' thread.thread_id %}">Charts</a></li>
-        <br>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No threads are available.</p>
-{% endif %}
--->
-
-
-<!--<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Django Paginator example</title>
-</head>
-<body>
-    <div class="container">
-        {% for post in page_obj.object_list %}
-          {# note that the list of posts are in the page_obj.object_list not page_obj #}
-
-            <h1>{{post.title}}</h1>
-            <small>{{post.username}}</small>>
-
-            <hr/>
-         {% endfor %}
-            </div>
-    <center>
-        {%if page_obj.has_previous %} {# whether the previous page exists #}
-            <a href="?page={{page_obj.previous_page_number}}"><</a> {# link to the prev page #}
-        {% endif %}
-        <span>{{page_obj.number}}</span> {# the current page number #}
-
-        {%if page_obj.has_next %} {# whether the next page exists #}
-            <a href="?page={{page_obj.next_page_number}}">></a> {# link to the next page #}
-        {% endif %}
-    </center>
-</body>
-</html>
--->
-
-<!-- this is bootstrap3. may not work with other versions
+<!-- this is bootstrap4. may not work with other versions
 https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-django.html-->
 <head>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
+<!--the table class below uses bootstrap to format the table. The first set of <th> tags are columns names. The following
+<th> tags use django variables that display the data in the specified column names-->
+<div>
 <table class="table table-bordered">
   <thead>
     <tr>
@@ -69,31 +22,33 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
         <td><a href="{% url 'polls:detail' thread.thread_id %}">{{ thread.title }}</a></td>
         <td>{{ thread.username }}</td>
         <td>{{ thread.last_page_scraped }}</td>
-        <td>{{ thread.date_time }}</td>
+        <td>{{ thread.date_time|date:'Y-m-d'  }}</td>
         <td><a href="{% url 'polls:pie_chart' thread.thread_id %}">Charts</a></td>
       </tr>
     {% endfor %}
   </tbody>
 </table>
-
-{% if threads.has_other_pages %}
-  <ul pagination>
+</div>
+<!-- below is pagination code. I use the Paginator class and get_elided_page_range in views.py to format the pagination
+This code uses bootstrap and prevents all pages from showing if there are several pages.-->
+<div>
+  <ul class="pagination justify-content-center flex-wrap mt-2 mb-4">
     {% if threads.has_previous %}
-      <li><a href="?page={{ threads.previous_page_number }}">&laquo;</a></li>
+      <li class="page-item"><a class="page-link" href="?page={{ threads.previous_page_number }}">&laquo;</a></li>
     {% else %}
-      <li class="disabled"><span>&laquo;</span></li>
+      <li class="disabled page-item"><span class="page-link">&laquo;</span></li>
     {% endif %}
-    {% for thread in threads.paginator.page_range %}
+    {% for thread in pagination_page_range|default_if_none:threads.paginator.get_elided_page_range %}
       {% if threads.number == thread %}
-        <li class="active"><span>{{ thread }} <span class="sr-only">(current)</span></span></li>
+         <li class="active page-item"><span class="page-link">{{ thread }}<span class="sr-only">(current)</span></span></li>
       {% else %}
-        <li><a href="?page={{ thread }}">{{ thread }}</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ thread }}">{{ thread }}</a></li>
       {% endif %}
     {% endfor %}
     {% if threads.has_next %}
-      <li><a href="?page={{ threads.next_page_number }}">&raquo;</a></li>
+      <li class="page-item"><a class="page-link" href="?page={{ threads.next_page_number }}">&raquo;</a></li>
     {% else %}
-      <li class="disabled"><span>&raquo;</span></li>
+     <li class="disabled page-item"><span class="page-link">&raquo;</span></li>
     {% endif %}
   </ul>
-{% endif %}
+</div>

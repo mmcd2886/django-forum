@@ -1,11 +1,11 @@
-
 <!-- this is bootstrap4. may not work with other versions
 https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-django.html-->
 <head>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
+<!--the table class below uses bootstrap to format the table. The first set of <th> tags are columns names. The following
+<th> tags use django variables that display the data in the specified column names-->
 <a href="{% url 'polls:index'%}">Back to Threads List</a>
-
 <div>
 <table class="table table-bordered">
   <thead>
@@ -20,13 +20,22 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
     </tr>
   </thead>
   <tbody>
+       <tr>
+          <td>{{ thread_info.username }}</td>
+          <td>OP</td>
+          <td>{{ thread_info.replies }}</td>
+          <td>N/A</td>
+          <td>{{ thread_info.date_time|date:'Y-m-d H:i' }}</td>
+          <td>N/A</td>
+          <td>N/A</td>
+      </tr>
     {% for post in posts %}
       <tr>
           <td>{{ post.username }}</td>
           <td>{{ post.quoted }}</td>
           <td>{{ post.replies }}</td>
           <td>{{ post.sentiment }}</td>
-          <td>{{ post.date_time }}</td>
+          <td>{{ post.date_time|date:'Y-m-d H:i' }}</td>
           <td>{{ post.score }}</td>
           <td>{{ post.thread_page }}</td>
       </tr>
@@ -34,7 +43,8 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
   </tbody>
 </table>
 </div>
-
+<!-- below is pagination code. I use the Paginator class and get_elided_page_range in views.py to format the pagination
+This code uses bootstrap and prevents all pages from showing if there are several pages.-->
 <div>
   <ul class="pagination justify-content-center flex-wrap mt-2 mb-4">
     {% if posts.has_previous %}
@@ -46,7 +56,7 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
       {% if posts.number == post %}
         <li class="active page-item"><span class="page-link">{{ post }}<span class="sr-only">(current)</span></span></li>
       {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{ post }}">{{ post }}</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ post }}">{{ post }}</a></li>
       {% endif %}
     {% endfor %}
     {% if posts.has_next %}
