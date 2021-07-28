@@ -10,11 +10,12 @@ from django.utils import timezone
 class Threads(models.Model):
     thread_id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=50)
-    date_time = models.DateTimeField(max_length=18)
+    date_time = models.DateTimeField()
     replies = models.CharField(max_length=5000)
     url = models.CharField(max_length=200, unique=True)
     title = models.CharField(max_length=1000)
     last_page_scraped = models.CharField(max_length=5000)
+    last_date_scraped = models.DateTimeField()  # most recent date that the thread was scraped
 
     def __str__(self):
         return self.username
@@ -32,7 +33,7 @@ class Posts(models.Model):
     score = models.DecimalField(max_digits=6, decimal_places=4)
     quoted = models.CharField(max_length=8)
     sentiment = models.CharField(max_length=10)
-    thread_page = models.CharField(max_length=10000)
+    thread_page = models.CharField(max_length=10000)  # page number that the reply appears on
     replies = models.CharField(max_length=10000)
 
     # you can only select one primary key in a Django model. UniqueConstraint allows you to set

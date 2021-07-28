@@ -10,7 +10,7 @@ from .models import Threads
 
 def index(request):
     # order threads bu date_time
-    threads_list = Threads.objects.order_by('date_time')
+    threads_list = Threads.objects.order_by('last_date_scraped')
     # get the page number from the URL
     page_number = request.GET.get('page', 1)
     # https://www.geeksforgeeks.org/how-to-add-pagination-in-django-project/
