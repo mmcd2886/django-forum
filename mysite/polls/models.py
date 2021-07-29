@@ -37,7 +37,7 @@ class Posts(models.Model):
     replies = models.CharField(max_length=10000)
 
     # you can only select one primary key in a Django model. UniqueConstraint allows you to set
-    # two unique values (works like a composite key). A user cannot post at the same date_time, so this will be unique.
+    # two unique values (works like a composite key). A user cannot post at the same date_time, so this will be unique
     class Meta:
         constraints = [models.UniqueConstraint(fields=['username', 'date_time'], name='composite_key')]
 
