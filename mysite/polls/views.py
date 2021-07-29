@@ -148,7 +148,8 @@ def pie_chart(request, thread_id):
     most_frequent_words_sorted_df_labels = most_frequent_words_sorted_df['Word'].tolist()
     most_frequent_words_sorted_df_data = most_frequent_words_sorted_df['Frequency'].tolist()
 
-    context = {'thread_info': thread_info, 'sentiment_pie_chart_labels': sentiment_pie_chart_labels,
+    context = {'thread_info': thread_info,
+               'sentiment_pie_chart_labels': sentiment_pie_chart_labels,
                'sentiment_with_quotes_data': sentiment_with_quotes_data,
                'sentiment_no_quotes_data': sentiment_no_quotes_data,
                'total_replies_datetime_bar_chart_labels': total_replies_datetime_bar_chart_labels,
