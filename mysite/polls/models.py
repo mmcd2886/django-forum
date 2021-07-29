@@ -27,7 +27,7 @@ class Posts(models.Model):
     username = models.CharField(max_length=50)
     date_time = models.DateTimeField()
     # Django automatically appends '_id' to the end of foreign key column names, that is why I force the name
-    # 'thread_id' using the 'db_column' argument; otherwise it will be thread_id_id. More info here:
+    # 'thread_id' using the 'db_column' argument; otherwise it will be thread_id_id.
     # https://docs.djangoproject.com/en/dev/ref/models/fields/#database-representation
     thread_id = models.ForeignKey(Threads, on_delete=models.CASCADE, db_column='thread_id')
     score = models.DecimalField(max_digits=6, decimal_places=4)
