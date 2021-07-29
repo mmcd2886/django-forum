@@ -7,6 +7,10 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
 <td> tags use django variables that display the data in the specified column names. The first set of <td> tags
  add the thread creators post to the table, all of the other replies are looped through and added to the table.-->
 <a href="{% url 'polls:index'%}">Back to Threads List</a>
+<br>
+<br>
+<h3>{{ thread_info.title }}</h3>
+<br>
 <div>
 <table class="table table-bordered">
   <thead>
