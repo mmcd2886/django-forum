@@ -15,6 +15,7 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
       <th>Created Date</th>
       <th>Total Views</th>
       <th>Total Replies</th>
+      <th>Reply Rate</th>
       <th>Charts</th>
     </tr>
   </thead>
@@ -27,6 +28,7 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
         <td>{{ thread.date_time|date:'Y-m-d'  }}</td>
         <td>{{ thread.total_views }}</td>
         <td>{{ thread.total_replies }}</td>
+        <td>{{ thread.reply_rate_percentage }}%</td>
         <td><a href="{% url 'polls:pie_chart' thread.thread_id %}">Charts</a></td>
       </tr>
     {% endfor %}

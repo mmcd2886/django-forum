@@ -17,6 +17,7 @@ class Threads(models.Model):
     last_page_scraped = models.CharField(max_length=5000)
     last_date_scraped = models.DateTimeField()  # most recent date that the thread was scraped
     total_views = models.CharField(max_length=500000000)
+    reply_rate_percentage = models.CharField(max_length=100000)
     total_replies = models.CharField(max_length=5000000)
 
     def __str__(self):

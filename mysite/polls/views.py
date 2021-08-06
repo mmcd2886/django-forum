@@ -48,6 +48,7 @@ def detail(request, thread_id):
     post_list = Posts.objects.filter(thread_id=thread_id).order_by('date_time')
     # get the page number from the URL
     page_number = request.GET.get('page', 1)
+
     # https://www.geeksforgeeks.org/how-to-add-pagination-in-django-project/
     # paginator takes list of objects as first argument, and number of pages for second
     paginator = Paginator(post_list, 49)
@@ -82,19 +83,10 @@ def pie_chart(request, thread_id):
     # labels for total thread views and total thread replies
     total_thread_views_and_replies_labels = ["Views", "Replies"]
 
-    # Pie chart total thread views and replies. Charts.js not display very large integers, so will find what percentage
-    # of replies are views and use that to display pie chart.
+    # Pie chart total thread views and replies.
     total_thread_views = getattr(thread_info, 'total_views')
     total_thread_replies = getattr(thread_info, 'total_replies')
-    # convert to int and remove commas
-    total_thread_views_no_comma = int(total_thread_views.replace(',', ''))
-    total_thread_replies_no_comma = int(total_thread_replies.replace(',', ''))
-    total_thread_views_and_replies_list = [total_thread_views_no_comma, total_thread_replies_no_comma]
-
-    # percentage_of_thread_views = total_thread_replies_no_comma / total_thread_views_no_comma * 100
-    # percentage_of_thread_views_rounded = round(percentage_of_thread_views, 1)
-    # percentage_of_thread_replies = 100 - percentage_of_thread_views_rounded
-    # total_thread_views_and_replies_list = [percentage_of_thread_replies, percentage_of_thread_views_rounded]
+    total_thread_views_and_replies_list = [total_thread_views, total_thread_replies]
 
     # labels to pass to charts.html for the sentiment pie chart
     sentiment_pie_chart_labels = ["Negative", "Neutral", "Positive"]
