@@ -3,6 +3,9 @@ from django.shortcuts import get_object_or_404, render
 import nltk
 from nltk.corpus import stopwords
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from bootstrap_datepicker_plus import DateTimePickerInput
+from django.urls import reverse
+from django.views import generic
 
 from .models import Posts
 from .models import Threads
@@ -75,6 +78,23 @@ def pie_chart(request, thread_id):
     # Convert this returned sql to a dataframe
     # https://stackoverflow.com/questions/11697887/converting-django-queryset-to-pandas-dataframe
     replies_from_thread_df = pd.DataFrame.from_records(Posts.objects.filter(thread_id=thread_id).values())
+
+    # labels for total thread views and total thread replies
+    total_thread_views_and_replies_labels = ["Views", "Replies"]
+
+    # Pie chart total thread views and replies. Charts.js not display very large integers, so will find what percentage
+    # of replies are views and use that to display pie chart.
+    total_thread_views = getattr(thread_info, 'total_views')
+    total_thread_replies = getattr(thread_info, 'total_replies')
+    # convert to int and remove commas
+    total_thread_views_no_comma = int(total_thread_views.replace(',', ''))
+    total_thread_replies_no_comma = int(total_thread_replies.replace(',', ''))
+    total_thread_views_and_replies_list = [total_thread_views_no_comma, total_thread_replies_no_comma]
+
+    # percentage_of_thread_views = total_thread_replies_no_comma / total_thread_views_no_comma * 100
+    # percentage_of_thread_views_rounded = round(percentage_of_thread_views, 1)
+    # percentage_of_thread_replies = 100 - percentage_of_thread_views_rounded
+    # total_thread_views_and_replies_list = [percentage_of_thread_replies, percentage_of_thread_views_rounded]
 
     # labels to pass to charts.html for the sentiment pie chart
     sentiment_pie_chart_labels = ["Negative", "Neutral", "Positive"]
@@ -157,7 +177,9 @@ def pie_chart(request, thread_id):
                'total_replies_by_username_labels': total_replies_by_username_labels,
                'total_replies_by_username_data': total_replies_by_username_data,
                'most_frequent_words_sorted_df_labels': most_frequent_words_sorted_df_labels,
-               'most_frequent_words_sorted_df_data': most_frequent_words_sorted_df_data
+               'most_frequent_words_sorted_df_data': most_frequent_words_sorted_df_data,
+               'total_thread_views_and_replies_labels': total_thread_views_and_replies_labels,
+               'total_thread_views_and_replies_list': total_thread_views_and_replies_list
                }
     # Pass the labels and data to charts.html so it can be visualized
     return render(request, 'polls/charts.html', context)

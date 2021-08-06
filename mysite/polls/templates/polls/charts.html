@@ -186,6 +186,36 @@ pie_chart method to create pie charts using the charts.js lib -->
         }
       }
     };
+    </script>
+
+<br>
+  <div id="container_6" style="width: 75%;">
+    <canvas id="total_thread_views_replies_pie"></canvas>
+  </div>
+
+  <script>
+    var total_thread_views_replies_pie_chart = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: {{ total_thread_views_and_replies_list|safe }},
+          backgroundColor: [
+          "#FF7F7F",
+          "#FFF9A6"
+          ],
+          label: 'Total'
+        }],
+        labels: {{ total_thread_views_and_replies_labels|safe }}
+      },
+      options: {
+        responsive: true,
+        title: {
+            display: true,
+            text: 'Thread Views and Replies'
+        }
+      }
+    };
+
       window.onload = function() {
       /*
       var ctx = document.getElementById('sentiment-pie-chart').getContext('2d');
@@ -203,6 +233,10 @@ pie_chart method to create pie charts using the charts.js lib -->
 
       var ctx_5 = document.getElementById('most_frequent_words_bar').getContext('2d');
       window.myBar = new Chart(ctx_5, most_frequent_words_bar_chart);
+
+      var ctx_6 = document.getElementById('total_thread_views_replies_pie').getContext('2d');
+      window.myPie_2 = new Chart(ctx_6, total_thread_views_replies_pie_chart);
+
 
     };
 

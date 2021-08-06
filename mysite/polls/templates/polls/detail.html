@@ -28,13 +28,13 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
   <!--Use this if statement to only show the thread creators reply in the table on the first page -->
     {% if posts.number == 1 %}
        <tr>
-          <td>{{ thread_info.username }}</td>
-          <td>OP</td>
+          <td>{{ thread_info.username }} (OP)</td>
+          <td></td>
           <td>{{ thread_info.replies }}</td>
-          <td>N/A</td>
+          <td></td>
+          <td></td>
           <td>{{ thread_info.date_time|date:'Y-m-d H:i' }}</td>
-          <td>N/A</td>
-          <td>N/A</td>
+          <td></td>
       </tr>
     {% endif %}
     {% for post in posts %}
