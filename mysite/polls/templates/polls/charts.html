@@ -1,10 +1,35 @@
 <!--charts.js tutorial https://simpleisbetterthancomplex.com/tutorial/2020/01/19/how-to-use-chart-js-with-django.html-->
 <!--https://stackoverflow.com/questions/24555823/multiple-chartjs-in-the-same-page/40401048-->
+<!--format datetime for html form https://stackoverflow.com/questions/63099974/django-template-convert-datetime-local-format-->
 {% block content %}
 <a href="{% url 'polls:index'%}">Threads</a>
 <h2> {{ thread_info.title }} </h2>
-<br>
 
+<h3>{{thread_info.date_time}}</h3>
+<h3>{{thread_info.last_date_scraped}}</h3>
+
+<!-- info for dateRangePicker https://www.daterangepicker.com-->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<input type="text" name="datetimes" />
+<script type="text/javascript">
+$(function() {
+  $('input[name="datetimes"]').daterangepicker({
+    timePicker: true,
+    startDate: "{{thread_info.date_time|date:'m-d-Y'}}{{thread_info.date_time|time:'H:i:s'}}",
+    endDate: "{{thread_info.last_date_scraped|date:'m-d-Y'}}{{thread_info.last_date_scraped|time:'H:i:s'}}",
+    minDate: "{{thread_info.date_time|date:'m-d-Y'}}{{thread_info.date_time|time:'H:i:s'}}",
+    maxDate: "{{thread_info.last_date_scraped|date:'m-d-Y'}}{{thread_info.last_date_scraped|time:'H:i:s'}}",
+    locale: {
+      format: 'MM/DD/YYYY hh:mm A'
+    }
+  });
+});
+</script>
+
+<br>
 <!-- add the charts.js library to page -->
 <!-- create two variables (sentiment_for_quotes, sentiment_for_no_quotes) that will use the data passed from views.py
 pie_chart method to create pie charts using the charts.js lib -->
