@@ -35,7 +35,7 @@ $(function() {
 pie_chart method to create pie charts using the charts.js lib -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 <!--
-<div id="container" style="width: 75%;">
+<div id="container" style="width: 60%; margin: 0 auto;">
     <canvas id="sentiment-pie-chart"></canvas>
   </div>
   <script>
@@ -65,44 +65,10 @@ pie_chart method to create pie charts using the charts.js lib -->
   </script>
 <br>
 -->
-
-  <div id="container_2" style="width: 75%;">
-    <canvas id="sentiment-pie-chart-2"></canvas>
-  </div>
-
-  <script>
-
-    var sentiment_for_no_quotes = {
-      type: 'pie',
-      data: {
-        datasets: [{
-          data: {{ sentiment_no_quotes_data|safe }},
-          backgroundColor: [
-          "#FFF9A6",
-          "#FF7F7F",
-          "#56d798",
-          ],
-          label: 'Sentiment'
-        }],
-        labels: {{ sentiment_pie_chart_labels|safe }}
-      },
-      options: {
-        responsive: true,
-        title: {
-            display: true,
-            text: 'Sentiment No Quotes'
-        }
-      }
-    };
-
-      </script>
-<br>
-  <div id="container_3" style="width: 75%;">
+  <div id="container_3" style="width: 60%; margin: 0 auto;">
     <canvas id="total_replies_bar"></canvas>
   </div>
-
   <script>
-
   var total_replies_datetime_bar_chart = {
       type: 'line',
       data: {
@@ -133,16 +99,42 @@ pie_chart method to create pie charts using the charts.js lib -->
         }
       }
     };
-
     </script>
+<br>
+
+  <div id="container_2" style="width: 60%; margin: 0 auto;">
+    <canvas id="sentiment-pie-chart-2"></canvas>
+  </div>
+  <script>
+    var sentiment_for_no_quotes = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: {{ sentiment_no_quotes_data|safe }},
+          backgroundColor: [
+          "#FFF9A6",
+          "#FF7F7F",
+          "#56d798",
+          ],
+          label: 'Sentiment'
+        }],
+        labels: {{ sentiment_pie_chart_labels|safe }}
+      },
+      options: {
+        responsive: true,
+        title: {
+            display: true,
+            text: 'Sentiment No Quotes'
+        }
+      }
+    };
+      </script>
 
 <br>
-  <div id="container_4" style="width: 75%;">
+  <div id="container_4" style="width: 60%; margin: 0 auto;">
     <canvas id="total_replies_username_bar"></canvas>
   </div>
-
   <script>
-
   var total_replies_username_bar_chart = {
       type: 'bar',
       data: {
@@ -175,12 +167,11 @@ pie_chart method to create pie charts using the charts.js lib -->
     };
     </script>
 <br>
-  <div id="container_5" style="width: 75%;">
+
+  <div id="container_5" style="width: 60%; margin: 0 auto;">
     <canvas id="most_frequent_words_bar"></canvas>
   </div>
-
   <script>
-
   var most_frequent_words_bar_chart = {
       type: 'horizontalBar',
       data: {
@@ -214,7 +205,7 @@ pie_chart method to create pie charts using the charts.js lib -->
     </script>
 
 <br>
-  <div id="container_6" style="width: 75%;">
+  <div id="container_6" style="width: 60%; margin: 0 auto;">
     <canvas id="total_thread_views_replies_pie"></canvas>
   </div>
 
@@ -254,13 +245,13 @@ pie_chart method to create pie charts using the charts.js lib -->
       window.myBar = new Chart(ctx_3, total_replies_datetime_bar_chart);
 
       var ctx_4 = document.getElementById('total_replies_username_bar').getContext('2d');
-      window.myBar = new Chart(ctx_4, total_replies_username_bar_chart);
+      window.myBar_2 = new Chart(ctx_4, total_replies_username_bar_chart);
 
       var ctx_5 = document.getElementById('most_frequent_words_bar').getContext('2d');
-      window.myBar = new Chart(ctx_5, most_frequent_words_bar_chart);
+      window.myBar_3 = new Chart(ctx_5, most_frequent_words_bar_chart);
 
       var ctx_6 = document.getElementById('total_thread_views_replies_pie').getContext('2d');
-      window.myPie_2 = new Chart(ctx_6, total_thread_views_replies_pie_chart);
+      window.myPie_3 = new Chart(ctx_6, total_thread_views_replies_pie_chart);
 
 
     };
