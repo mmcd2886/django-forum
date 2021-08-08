@@ -1,8 +1,12 @@
 <!--charts.js tutorial https://simpleisbetterthancomplex.com/tutorial/2020/01/19/how-to-use-chart-js-with-django.html-->
 <!--https://stackoverflow.com/questions/24555823/multiple-chartjs-in-the-same-page/40401048-->
 <!--format datetime for html form https://stackoverflow.com/questions/63099974/django-template-convert-datetime-local-format-->
-<a href="{% url 'polls:index'%}">Threads</a>
+<a href="{% url 'polls:index'%}">Back to Threads List</a>
 <br>
+<br>
+<a href="{% url 'polls:detail' thread_info.thread_id %}">Replies for Thread</a>
+<br>
+<h2> {{ thread_info.title }} </h2>
 {% block content %}
 <!--form that will filter date range of posts -->
 <form method="POST">{% csrf_token %}
@@ -18,45 +22,21 @@
 </p>
     <button type="submit">Submit</button>
 </form>
-
-<h2> {{ thread_info.title }} </h2>
-
 <br>
+<a href="{% url 'polls:pie_chart' thread_info.thread_id %}">Unfilter</a>
+<!--filter by username form-->
+<form method="POST">{% csrf_token %}
+  <label for="fname">Filter by Username:</label><br>
+  <input type="text" id="fname" name="fname"><br>
+  <input type="submit" value="Submit">
+</form>
+
 <!-- add the charts.js library to page -->
 <!-- create two variables (sentiment_for_quotes, sentiment_for_no_quotes) that will use the data passed from views.py
 pie_chart method to create pie charts using the charts.js lib -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-<!--
-<div id="container" style="width: 60%; margin: 0 auto;">
-    <canvas id="sentiment-pie-chart"></canvas>
-  </div>
-  <script>
-    var sentiment_for_quotes = {
-      type: 'pie',
-      data: {
-        datasets: [{
-          data: {{ sentiment_with_quotes_data|safe }},
-          backgroundColor: [
-          "#FFF9A6",
-          "#FF7F7F",
-          "#56d798",
-          ],
-          label: 'Sentiment'
-        }],
-        labels: {{ sentiment_pie_chart_labels|safe }}
-      },
-      options: {
-        responsive: true,
-        title: {
-            display: true,
-            text: 'Sentiment Quotes'
-        }
-      }
-    };
 
-  </script>
 <br>
--->
   <div id="container_3" style="width: 60%; margin: 0 auto;">
     <canvas id="total_replies_bar"></canvas>
   </div>
@@ -104,9 +84,9 @@ pie_chart method to create pie charts using the charts.js lib -->
         datasets: [{
           data: {{ sentiment_no_quotes_data|safe }},
           backgroundColor: [
-          "#FFF9A6",
-          "#FF7F7F",
           "#56d798",
+          "#FF7F7F",
+          "#FFF9A6"
           ],
           label: 'Sentiment'
         }],
@@ -194,12 +174,40 @@ pie_chart method to create pie charts using the charts.js lib -->
         }
       }
     };
+</script>
+<br>
+
+<div id="container" style="width: 60%; margin: 0 auto;">
+    <canvas id="sentiment-pie-chart"></canvas>
+  </div>
+  <script>
+    var sentiment_for_quotes = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: {{ quotes_sentiment_count_list|safe }},
+          backgroundColor: [
+          "#56d798",
+          "#FF7F7F",
+          "#FFF9A6"
+          ],
+          label: 'Sentiment'
+        }],
+        labels: {{ sentiment_pie_chart_labels|safe }}
+      },
+      options: {
+        responsive: true,
+        title: {
+            display: true,
+            text: 'Sentiment Quotes'
+        }
+      }
+    };
 
       window.onload = function() {
-      /*
+
       var ctx = document.getElementById('sentiment-pie-chart').getContext('2d');
       window.myPie = new Chart(ctx, sentiment_for_quotes);
-      */
 
       var ctx_2 = document.getElementById('sentiment-pie-chart-2').getContext('2d');
       window.myPie_2 = new Chart(ctx_2, sentiment_for_no_quotes);

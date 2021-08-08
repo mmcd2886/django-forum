@@ -39,10 +39,21 @@ def index(request):
 
 
 def detail(request, thread_id):
+    # if will run when filtering by username
+    if request.method == 'POST':
+        username_filter = request.POST['fname']
+        print(username_filter)
+
+        # posts should be changed to post_list. This section is interim until i figure out pagination
+        posts = Posts.objects.filter(thread_id=thread_id).filter(username=username_filter).order_by('date_time')
+        thread_info = Threads.objects.get(thread_id=thread_id)
+        context = {'posts': posts, 'thread_info': thread_info}
+        return render(request, 'polls/detail.html', context)
+    else:  # get the replies from the thread
+        post_list = Posts.objects.filter(thread_id=thread_id).order_by('date_time')
     # get data for the thread so that you can display information for it in charts.html
     thread_info = Threads.objects.get(thread_id=thread_id)
-    # get the replies from the thread
-    post_list = Posts.objects.filter(thread_id=thread_id).order_by('date_time')
+
     # get the page number from the URL
     page_number = request.GET.get('page', 1)
 
@@ -72,12 +83,19 @@ def detail(request, thread_id):
 def pie_chart(request, thread_id):
     # if statement will run when a date range is submitted on the charts page. This will filter out any posts not
     # within the date range
-    if request.method == 'POST':
+    if request.method == 'POST' and 'start_date' in request.POST:
         date_picker_start_date = request.POST['start_date']
         date_picker_end_date = request.POST['end_date']
         print(date_picker_start_date, " - ", date_picker_end_date)
-        replies_from_thread_df = pd.DataFrame.from_records(Posts.objects.filter(thread_id=thread_id).filter(date_time__range=[date_picker_start_date, date_picker_end_date]).values())
-        #print(thread_info)
+        replies_from_thread_df = pd.DataFrame.from_records(Posts.objects.filter(thread_id=thread_id).filter(
+            date_time__range=[date_picker_start_date, date_picker_end_date]).values())
+    # statement will run if username is submitted in the form. Will only show charts for this username
+    elif request.method == 'POST' and 'fname' in request.POST:
+        username_filter = request.POST['fname']
+        print(username_filter)
+        replies_from_thread_df = pd.DataFrame.from_records(
+            Posts.objects.filter(thread_id=thread_id).filter(username=username_filter).values())
+    # will run when page first loads, and no form submissions have been made on the page.
     else:
         # after thread link is clicked, use thread_id to filter replies for only that thread.
         # Convert this returned sql to a dataframe
@@ -89,28 +107,38 @@ def pie_chart(request, thread_id):
     date_of_first_reply = df_for_getting_dates.date_time.min()
     date_of_last_reply = df_for_getting_dates.date_time.max()
 
-    # get the dates of the first last replies after the dates have been filtered within a date range using the date picker
+    # get the dates of the first last replies after the dates have been filtered within a date range using the date
+    # picker
     date_of_first_reply_in_date_range = replies_from_thread_df.date_time.min()
     date_of_last_reply_in_date_range = replies_from_thread_df.date_time.max()
-
 
     # get data for the thread so that you can display information for it in charts.html
     thread_info = Threads.objects.get(thread_id=thread_id)
 
     # labels to pass to charts.html for the sentiment pie chart
-    sentiment_pie_chart_labels = ["Negative", "Neutral", "Positive"]
+    sentiment_pie_chart_labels = ["Positive", "Negative", "Neutral"]
 
     # pie chart sentiment with quotes
-    # groupby the sentiment column (pos. neg. neut.) add up each and create the total sentiment column
-    sentiment_with_quotes_df = replies_from_thread_df.groupby(["sentiment"]).size().reset_index(name="total sentiment")
-    sentiment_with_quotes_data = sentiment_with_quotes_df["total sentiment"].tolist()
+    # find the number of occurrences of Pos, Neg, Neut in sentiment column.
+    quotes_sentiment_count_list = []
+    quotes_df = replies_from_thread_df[replies_from_thread_df["quoted"] == "quote"]
+    for sentiment in sentiment_pie_chart_labels:
+        if sentiment in quotes_df['sentiment'].values:
+            quotes_sentiment_count_list.append(quotes_df['sentiment'].value_counts()[sentiment])
+        else:
+            quotes_sentiment_count_list.append(0)
+    print(quotes_sentiment_count_list)
 
-    # pie chart sentiment without quotes
-    # groupby the sentiment column (pos. neg. neut.) add up each a create the total sentiment column, but do not
-    # include replies that have quotes from other users because this could impact overall sentiment.
+    # pie chart sentiment without quoted replies
+    # find the number of occurrences of Pos, Neg, Neut in sentiment column.
+    no_quotes_sentiment_count_list = []
     no_quotes_df = replies_from_thread_df[replies_from_thread_df["quoted"] == "No quote"]
-    sentiment_no_quotes_df = no_quotes_df.groupby(["sentiment"]).size().reset_index(name="total sentiment")
-    sentiment_no_quotes_data = sentiment_no_quotes_df["total sentiment"].tolist()
+    for sentiment in sentiment_pie_chart_labels:
+        if sentiment in no_quotes_df['sentiment'].values:
+            no_quotes_sentiment_count_list.append(no_quotes_df['sentiment'].value_counts()[sentiment])
+        else:
+            no_quotes_sentiment_count_list.append(0)
+    print(no_quotes_sentiment_count_list)
 
     # Total Replies on a day in Chron order bar chart
     # Groupby Day using freq='D' and then find the size() and add it to the column Total Replies which will tally
@@ -172,8 +200,8 @@ def pie_chart(request, thread_id):
 
     context = {'thread_info': thread_info,
                'sentiment_pie_chart_labels': sentiment_pie_chart_labels,
-               'sentiment_with_quotes_data': sentiment_with_quotes_data,
-               'sentiment_no_quotes_data': sentiment_no_quotes_data,
+               'quotes_sentiment_count_list': quotes_sentiment_count_list,
+               'sentiment_no_quotes_data': no_quotes_sentiment_count_list,
                'total_replies_datetime_bar_chart_labels': total_replies_datetime_bar_chart_labels,
                'total_replies_datetime_bar_chart_data': total_replies_datetime_bar_chart_data,
                'total_replies_by_username_labels': total_replies_by_username_labels,
