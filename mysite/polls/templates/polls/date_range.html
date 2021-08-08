@@ -1,9 +1,0 @@
-{% load bootstrap4 %}
-{% bootstrap_css %}
-{% bootstrap_javascript jquery='full' %}
-{{ form.media }}
-
-<form method="post">{% csrf_token %}
-    {% bootstrap_form form %}
-    <input type="submit" value="Save">
-</form>

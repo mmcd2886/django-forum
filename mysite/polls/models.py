@@ -39,8 +39,9 @@ class Posts(models.Model):
     thread_page = models.CharField(max_length=10000)  # page number that the reply appears on
     replies = models.CharField(max_length=10000)
 
-    # you can only select one primary key in a Django model. UniqueConstraint allows you to set
-    # two unique values (works like a composite key). A user cannot post at the same date_time, so this will be unique
+    # you can only select one primary key in a Django model. UniqueConstraint allows you to set two unique values (
+    # works like a composite key). It is not possible for a user to  post at the same date_time, so this will serve as
+    # a unique key so a users posts are not saved twice to the DB
     class Meta:
         constraints = [models.UniqueConstraint(fields=['username', 'date_time'], name='composite_key')]
 

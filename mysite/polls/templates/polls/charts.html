@@ -1,33 +1,25 @@
 <!--charts.js tutorial https://simpleisbetterthancomplex.com/tutorial/2020/01/19/how-to-use-chart-js-with-django.html-->
 <!--https://stackoverflow.com/questions/24555823/multiple-chartjs-in-the-same-page/40401048-->
 <!--format datetime for html form https://stackoverflow.com/questions/63099974/django-template-convert-datetime-local-format-->
-{% block content %}
 <a href="{% url 'polls:index'%}">Threads</a>
+<br>
+{% block content %}
+<!--form that will filter date range of posts -->
+<form method="POST">{% csrf_token %}
+    <p>Start date<input type = 'datetime-local'  name='start_date'
+                        value="{{date_of_first_reply_in_date_range|date:'Y-m-d'}}T{{date_of_first_reply_in_date_range|time:'H:i'}}"
+                        min="{{date_of_first_reply|date:'Y-m-d'}}T{{date_of_first_reply|time:'H:i'}}"
+                        max="{{date_of_last_reply|date:'Y-m-d'}}T{{date_of_last_reply|time:'H:i'}}">
+    </p>
+    <p>End date<input type = 'datetime-local'  name='end_date'
+                      value="{{date_of_last_reply_in_date_range|date:'Y-m-d'}}T{{date_of_last_reply_in_date_range|time:'H:i'}}"
+                      min="{{date_of_first_reply|date:'Y-m-d'}}T{{date_of_first_reply|time:'H:i'}}"
+                      max="{{date_of_last_reply|date:'Y-m-d'}}T{{date_of_last_reply|time:'H:i'}}">
+</p>
+    <button type="submit">Submit</button>
+</form>
+
 <h2> {{ thread_info.title }} </h2>
-
-<h3>{{thread_info.date_time}}</h3>
-<h3>{{thread_info.last_date_scraped}}</h3>
-
-<!-- info for dateRangePicker https://www.daterangepicker.com-->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-<input type="text" name="datetimes" />
-<script type="text/javascript">
-$(function() {
-  $('input[name="datetimes"]').daterangepicker({
-    timePicker: true,
-    startDate: "{{thread_info.date_time|date:'m-d-Y'}}{{thread_info.date_time|time:'H:i:s'}}",
-    endDate: "{{thread_info.last_date_scraped|date:'m-d-Y'}}{{thread_info.last_date_scraped|time:'H:i:s'}}",
-    minDate: "{{thread_info.date_time|date:'m-d-Y'}}{{thread_info.date_time|time:'H:i:s'}}",
-    maxDate: "{{thread_info.last_date_scraped|date:'m-d-Y'}}{{thread_info.last_date_scraped|time:'H:i:s'}}",
-    locale: {
-      format: 'MM/DD/YYYY hh:mm A'
-    }
-  });
-});
-</script>
 
 <br>
 <!-- add the charts.js library to page -->
@@ -202,35 +194,6 @@ pie_chart method to create pie charts using the charts.js lib -->
         }
       }
     };
-    </script>
-
-<br>
-  <div id="container_6" style="width: 60%; margin: 0 auto;">
-    <canvas id="total_thread_views_replies_pie"></canvas>
-  </div>
-
-  <script>
-    var total_thread_views_replies_pie_chart = {
-      type: 'pie',
-      data: {
-        datasets: [{
-          data: {{ total_thread_views_and_replies_list|safe }},
-          backgroundColor: [
-          "#FF7F7F",
-          "#FFF9A6"
-          ],
-          label: 'Total'
-        }],
-        labels: {{ total_thread_views_and_replies_labels|safe }}
-      },
-      options: {
-        responsive: true,
-        title: {
-            display: true,
-            text: 'Thread Views and Replies'
-        }
-      }
-    };
 
       window.onload = function() {
       /*
@@ -249,10 +212,6 @@ pie_chart method to create pie charts using the charts.js lib -->
 
       var ctx_5 = document.getElementById('most_frequent_words_bar').getContext('2d');
       window.myBar_3 = new Chart(ctx_5, most_frequent_words_bar_chart);
-
-      var ctx_6 = document.getElementById('total_thread_views_replies_pie').getContext('2d');
-      window.myPie_3 = new Chart(ctx_6, total_thread_views_replies_pie_chart);
-
 
     };
 

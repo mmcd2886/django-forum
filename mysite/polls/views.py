@@ -3,17 +3,14 @@ from django.shortcuts import get_object_or_404, render
 import nltk
 from nltk.corpus import stopwords
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from bootstrap_datepicker_plus import DateTimePickerInput
-from django.urls import reverse
-from django.views import generic
 
 from .models import Posts
 from .models import Threads
 
 
 def index(request):
-    # order threads bu date_time
-    threads_list = Threads.objects.order_by('last_date_scraped')
+    # order threads by date_time. notice the '-' im front of 'last_date_scraped. The '-' orders it by DESC.
+    threads_list = Threads.objects.order_by('-last_date_scraped')
     # get the page number from the URL
     page_number = request.GET.get('page', 1)
     # https://www.geeksforgeeks.org/how-to-add-pagination-in-django-project/
@@ -21,7 +18,7 @@ def index(request):
     paginator = Paginator(threads_list, 50)
     # will use this to prevent every page number from showing in pagination. Will only get numbers on either side of
     # current page
-    # https: // docs.djangoproject.com / en / 3.2 / ref / paginator /  # django.core.paginator.Paginator.get_elided_page_range
+    # https://docs.djangoproject.com/en/3.2/ref/paginator/#django.core.paginator.Paginator.get_elided_page_range
     # https://nemecek.be/blog/105/how-to-use-elided-pagination-in-django-and-solve-too-many-pages-problem
     pagination_page_range = paginator.get_elided_page_range(number=page_number)
 
@@ -73,20 +70,32 @@ def detail(request, thread_id):
 # Tutorial for visualizing using charts.js
 # https://simpleisbetterthancomplex.com/tutorial/2020/01/19/how-to-use-chart-js-with-django.html
 def pie_chart(request, thread_id):
+    # if statement will run when a date range is submitted on the charts page. This will filter out any posts not
+    # within the date range
+    if request.method == 'POST':
+        date_picker_start_date = request.POST['start_date']
+        date_picker_end_date = request.POST['end_date']
+        print(date_picker_start_date, " - ", date_picker_end_date)
+        replies_from_thread_df = pd.DataFrame.from_records(Posts.objects.filter(thread_id=thread_id).filter(date_time__range=[date_picker_start_date, date_picker_end_date]).values())
+        #print(thread_info)
+    else:
+        # after thread link is clicked, use thread_id to filter replies for only that thread.
+        # Convert this returned sql to a dataframe
+        # https://stackoverflow.com/questions/11697887/converting-django-queryset-to-pandas-dataframe
+        replies_from_thread_df = pd.DataFrame.from_records(Posts.objects.filter(thread_id=thread_id).values())
+
+    # get the dates of the first and last replies posted
+    df_for_getting_dates = pd.DataFrame.from_records(Posts.objects.filter(thread_id=thread_id).values())
+    date_of_first_reply = df_for_getting_dates.date_time.min()
+    date_of_last_reply = df_for_getting_dates.date_time.max()
+
+    # get the dates of the first last replies after the dates have been filtered within a date range using the date picker
+    date_of_first_reply_in_date_range = replies_from_thread_df.date_time.min()
+    date_of_last_reply_in_date_range = replies_from_thread_df.date_time.max()
+
+
     # get data for the thread so that you can display information for it in charts.html
     thread_info = Threads.objects.get(thread_id=thread_id)
-    # after thread link is clicked, use thread_id to filter replies for only that thread.
-    # Convert this returned sql to a dataframe
-    # https://stackoverflow.com/questions/11697887/converting-django-queryset-to-pandas-dataframe
-    replies_from_thread_df = pd.DataFrame.from_records(Posts.objects.filter(thread_id=thread_id).values())
-
-    # labels for total thread views and total thread replies
-    total_thread_views_and_replies_labels = ["Views", "Replies"]
-
-    # Pie chart total thread views and replies.
-    total_thread_views = getattr(thread_info, 'total_views')
-    total_thread_replies = getattr(thread_info, 'total_replies')
-    total_thread_views_and_replies_list = [total_thread_views, total_thread_replies]
 
     # labels to pass to charts.html for the sentiment pie chart
     sentiment_pie_chart_labels = ["Negative", "Neutral", "Positive"]
@@ -112,6 +121,7 @@ def pie_chart(request, thread_id):
     total_replies_datetime_df = replies_from_thread_df.set_index("date_time").groupby(pd.Grouper(freq='D')).size(). \
         reset_index(name='total replies')
     total_replies_datetime_df["date_time"] = (total_replies_datetime_df["date_time"].dt.strftime('%Y-%m-%d'))
+
     # This date will be the x-axis title if there is only one day of Replies
     if len(total_replies_datetime_df["date_time"]) == 1:
         total_replies_datetime_df = replies_from_thread_df.set_index("date_time").groupby(
@@ -170,8 +180,10 @@ def pie_chart(request, thread_id):
                'total_replies_by_username_data': total_replies_by_username_data,
                'most_frequent_words_sorted_df_labels': most_frequent_words_sorted_df_labels,
                'most_frequent_words_sorted_df_data': most_frequent_words_sorted_df_data,
-               'total_thread_views_and_replies_labels': total_thread_views_and_replies_labels,
-               'total_thread_views_and_replies_list': total_thread_views_and_replies_list
+               'date_of_first_reply': date_of_first_reply,
+               'date_of_last_reply': date_of_last_reply,
+               'date_of_first_reply_in_date_range': date_of_first_reply_in_date_range,
+               'date_of_last_reply_in_date_range': date_of_last_reply_in_date_range
                }
     # Pass the labels and data to charts.html so it can be visualized
     return render(request, 'polls/charts.html', context)
