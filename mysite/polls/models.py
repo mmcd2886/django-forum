@@ -19,6 +19,7 @@ class Threads(models.Model):
     total_views = models.CharField(max_length=500000000)
     reply_rate_percentage = models.CharField(max_length=100000)
     total_replies = models.CharField(max_length=5000000)
+    total_distinct_usernames = models.CharField(max_length=100000, null=True, blank=True) # this will need to allow null values
 
     def __str__(self):
         return self.username

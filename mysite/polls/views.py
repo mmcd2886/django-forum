@@ -23,14 +23,14 @@ def index(request):
     pagination_page_range = paginator.get_elided_page_range(number=page_number)
 
     try:
-        threads = paginator.get_page(page_number)  # returns the desired page object
+        thread_info = paginator.get_page(page_number)  # returns the desired page object
     except PageNotAnInteger:
         # if page_number is not an integer then assign the first page
-        threads = paginator.page(1)
+        thread_info = paginator.page(1)
     except EmptyPage:
         # if page is empty then return last page
-        threads = page_number.page(paginator.num_pages)
-    context = {'pagination_page_range': pagination_page_range, 'threads': threads}
+        thread_info = page_number.page(paginator.num_pages)
+    context = {'pagination_page_range': pagination_page_range, 'threads': thread_info}
 
     # The render() function takes the request object as its first argument, a template name
     # as its second argument and a dictionary as its optional third argument. It returns an
@@ -51,6 +51,7 @@ def detail(request, thread_id):
         return render(request, 'polls/detail.html', context)
     else:  # get the replies from the thread
         post_list = Posts.objects.filter(thread_id=thread_id).order_by('date_time')
+
     # get data for the thread so that you can display information for it in charts.html
     thread_info = Threads.objects.get(thread_id=thread_id)
 
