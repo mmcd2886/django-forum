@@ -13,10 +13,11 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
       <th>Pages</th>
       <th>Username</th>
       <th>Created Date</th>
+      <th>View/Reply Rate (est.)</th>
       <th>Total Views</th>
       <th>Total Replies</th>
-      <th>Reply Rate</th>
       <th>Distinct Usernames</th>
+      <th>Distinct Replies</th>
       <th>Charts</th>
     </tr>
   </thead>
@@ -26,11 +27,12 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
         <td><a href="{% url 'polls:detail' thread.thread_id %}">{{ thread.title }}</a></td>
         <td>{{ thread.last_page_scraped }}</td>
         <td>{{ thread.username }}</td>
-        <td>{{ thread.date_time|date:'Y-m-d'  }}</td>
+        <td>{{ thread.date_time|date:'Y-m-d' }}</td>
+        <td>{{ thread.reply_rate_percentage }}%</td>
         <td>{{ thread.total_views }}</td>
         <td>{{ thread.total_replies }}</td>
-        <td>{{ thread.reply_rate_percentage }}%</td>
         <td>{{ thread.total_distinct_usernames }}</td>
+        <td>{{ thread.percent_distinct_replies }}%</td>
         <td><a href="{% url 'polls:pie_chart' thread.thread_id %}">Charts</a></td>
       </tr>
     {% endfor %}
