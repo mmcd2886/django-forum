@@ -73,7 +73,7 @@ def detail(request, thread_id):
         # if page_number is not an integer then assign the first page
         posts = paginator.page(1)
     except EmptyPage:
-        # if page is empty then return last page
+        # if page is empty then return the last page
         posts = page_number.page(paginator.num_pages)
     context = {'pagination_page_range': pagination_page_range, 'posts': posts, 'thread_info': thread_info}
     return render(request, 'polls/detail.html', context)
