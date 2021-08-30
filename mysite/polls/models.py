@@ -31,10 +31,10 @@ class Threads(models.Model):
 class Posts(models.Model):
     username = models.CharField(max_length=50)
     date_time = models.DateTimeField()
-    # Django automatically appends '_id' to the end of foreign key column names, that is why I force the name
-    # 'thread_id' using the 'db_column' argument; otherwise it will be thread_id_id. More info here:
+    # Django automatically appends '_id' to the end of foreign key column names. So to access this
+    # you will need to use thread_id
     # https://docs.djangoproject.com/en/dev/ref/models/fields/#database-representation
-    thread_id = models.ForeignKey(Threads, on_delete=models.CASCADE, db_column='thread_id')
+    thread = models.ForeignKey(Threads, on_delete=models.CASCADE)
     score = models.DecimalField(max_digits=6, decimal_places=4)
     quoted = models.CharField(max_length=8)
     sentiment = models.CharField(max_length=10)

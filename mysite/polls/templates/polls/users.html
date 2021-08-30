@@ -1,0 +1,34 @@
+<a href="{% url 'polls:index'%}">Back to Threads List</a>
+<br>
+<form method="POST">{% csrf_token %}
+  <label for="fname">Filter by Username:</label><br>
+  <input type="text" id="fname" name="fname"><br>
+  <input type="submit" value="Submit">
+</form>
+
+
+<!-- this is bootstrap4. may not work with other versions
+https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-django.html-->
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<!--the table class below uses bootstrap to format the table. The first set of <th> tags are columns names. The following
+<td> tags use django variables that display the data in the specified column names-->
+<div>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Thread Title</th>
+      <th>Replies</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for thread_title, total_replies, thread_id in zipped_replies_title_list %}
+      <tr>
+        <td><a href="{% url 'polls:detail' thread_id %}"> {{ thread_title }} </a></td>
+        <td>{{ total_replies }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>

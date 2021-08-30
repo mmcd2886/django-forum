@@ -93,7 +93,6 @@ def pie_chart(request, thread_id):
     # statement will run if username is submitted in the form. Will only show charts for this username
     elif request.method == 'POST' and 'fname' in request.POST:
         username_filter = request.POST['fname']
-        print(username_filter)
         replies_from_thread_df = pd.DataFrame.from_records(
             Posts.objects.filter(thread_id=thread_id).filter(username=username_filter).values())
     # will run when page first loads, and no form submissions have been made on the page.
@@ -216,3 +215,37 @@ def pie_chart(request, thread_id):
                }
     # Pass the labels and data to charts.html so it can be visualized
     return render(request, 'polls/charts.html', context)
+
+
+def users(request):
+    # this is for finding all threads a user has replied to
+    # when a user enters a username into the text box and submits get all posts from that user
+    if request.method == 'POST':
+        username_filter = request.POST['fname']
+        posts = Posts.objects.filter(username=username_filter).order_by('date_time')
+        thread_title_list = []
+        thread_id_list = []
+        replies_count_and_thread_title_df = pd.DataFrame()
+        # get the thread_id(foreign key) from the posts and use it to get the thread title from the Threads table
+        for post in posts:
+            thread_id = post.thread_id
+            thread_info = Threads.objects.get(thread_id=thread_id)
+            thread_title_list.append(thread_info.title)
+            thread_id_list.append(thread_id)
+        # use a dataframe to find the total occurrences of a thread tile which will indicate how many times a
+        # user replied to that thread.
+        replies_count_and_thread_title_df['title'] = thread_title_list
+        replies_count_and_thread_title_df['thread_id'] = thread_id_list
+        grouped_df = replies_count_and_thread_title_df.groupby(['title', 'thread_id']).size().reset_index(
+            name='total replies count')
+        print(grouped_df)
+        total_replies_count_list = grouped_df['total replies count'].to_list()
+        thread_title_list = grouped_df['title'].to_list()
+        thread_id_list = grouped_df['thread_id'].to_list()
+        zipped_replies_title_list = zip(thread_title_list, total_replies_count_list, thread_id_list)
+
+        context = {'zipped_replies_title_list': zipped_replies_title_list
+                   }
+        return render(request, 'polls/users.html', context)
+    else:
+        return render(request, 'polls/users.html')
