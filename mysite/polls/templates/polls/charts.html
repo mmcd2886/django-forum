@@ -113,6 +113,54 @@ pie_chart method to create pie charts using the charts.js lib -->
     };
     </script>
 <br>
+<br>
+
+<div id="container_7" style="width: 60%; margin: 0 auto;">
+<canvas id="daily-total-sentiment-stacked-bar-canvas"></canvas>
+</div>
+  <script>
+  var daily_total_sentiment_stacked_bar = {
+      type: 'bar',
+      data: {
+      labels: {{ total_daily_sentiment_stacked_bar_chart_labels|safe }},
+        datasets: [{
+         label: 'Negative',
+         backgroundColor: "#FF7F7F",
+          data: {{ total_daily_sentiment_stacked_bar_chart_negative_data|safe }},
+          },
+          {
+          label: 'Neutral',
+          backgroundColor: "#FFF9A6",
+          data: {{ total_daily_sentiment_stacked_bar_chart_neutral_data|safe }},
+          },
+          {
+          label: 'positive',
+          backgroundColor: "#56d798",
+          data: {{ total_daily_sentiment_stacked_bar_chart_positive_data|safe }},
+        }],
+      },
+options: {
+    scales: {
+      xAxes: [{
+        stacked: true,
+        gridLines: {
+          display: false,
+        }
+      }],
+      yAxes: [{
+        stacked: true,
+        ticks: {
+          beginAtZero: true,
+        },
+        type: 'linear',
+      }]
+    },
+    responsive: true,
+  }
+};
+    </script>
+<br>
+
 
 <div id="container_2" style="width: 60%; margin: 0 auto;">
 <canvas id="sentiment-for-no-quotes-pie-canvas" style="width: 60%; margin: 0 auto;"></canvas>
@@ -261,7 +309,8 @@ pie_chart method to create pie charts using the charts.js lib -->
       var ctx_6 = document.getElementById('daily-average-sentiment-line-canvas').getContext('2d');
       window.myLine = new Chart(ctx_6, daily_average_sentiment_line);
 
-
+      var ctx_7 = document.getElementById('daily-total-sentiment-stacked-bar-canvas').getContext('2d');
+      window.myStacked = new Chart(ctx_7, daily_total_sentiment_stacked_bar);
     };
 
   </script>

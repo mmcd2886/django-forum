@@ -144,13 +144,13 @@ def pie_chart(request, thread_id):
     # day.
     total_replies_datetime_df = replies_from_thread_df.set_index("date_time").groupby(pd.Grouper(freq='D')).size(). \
         reset_index(name='total replies')
-    print(replies_from_thread_df)
     total_replies_datetime_df["date_time"] = (total_replies_datetime_df["date_time"].dt.strftime('%Y-%m-%d'))
 
     # This date will be the x-axis title if there is only one day of Replies
     if len(total_replies_datetime_df["date_time"]) == 1:
         total_replies_datetime_df = replies_from_thread_df.set_index("date_time").groupby(
             pd.Grouper(freq='H')).size().reset_index(name='total replies')
+
         total_replies_datetime_df["date_time"] = (total_replies_datetime_df["date_time"].dt.strftime('%H:%M:%S'))
 
     total_replies_datetime_bar_chart_labels = total_replies_datetime_df["date_time"].tolist()
@@ -171,10 +171,27 @@ def pie_chart(request, thread_id):
     # replace NaN with 0 otherwise chart will not display
     daily_sentiment_average_df['average score'] = daily_sentiment_average_df['average score'].fillna(0)
 
-
     daily_sentiment_average_df_line_chart_labels = daily_sentiment_average_df["date_time"].tolist()
     daily_sentiment_average_df_line_chart_data = daily_sentiment_average_df["average score"].tolist()
-    print(daily_sentiment_average_df)
+
+    # find the total pos. neg. neut. occurrences for each day. unstack() does a pivot
+    daily_sentiment_total_df = replies_from_thread_df.set_index("date_time").groupby(
+        pd.Grouper(freq='D')).sentiment.value_counts().to_frame().unstack(fill_value=0)
+    daily_sentiment_total_df = daily_sentiment_total_df.reset_index()
+    daily_sentiment_total_df["date_time"] = (daily_sentiment_total_df["date_time"].dt.strftime('%Y-%m-%d'))
+
+    print(list(daily_sentiment_total_df.columns))
+
+    total_daily_sentiment_stacked_bar_chart_labels = daily_sentiment_total_df['date_time'].tolist()
+    total_daily_sentiment_stacked_bar_chart_negative_data = daily_sentiment_total_df['sentiment', 'Negative'].tolist()
+    total_daily_sentiment_stacked_bar_chart_neutral_data = daily_sentiment_total_df['sentiment', 'Neutral'].tolist()
+    total_daily_sentiment_stacked_bar_chart_positive_data = daily_sentiment_total_df['sentiment', 'Positive'].tolist()
+    print(total_daily_sentiment_stacked_bar_chart_negative_data)
+    print(total_daily_sentiment_stacked_bar_chart_neutral_data)
+    print(total_daily_sentiment_stacked_bar_chart_positive_data)
+    print(total_daily_sentiment_stacked_bar_chart_labels)
+
+
     # Total Replies by top replying users bar chart
     # Use groupby to group by Username, then use .size() to return a series that will show the total number for each
     # username. Convert this to a dataframe using .reset_index()
@@ -229,7 +246,11 @@ def pie_chart(request, thread_id):
                'date_of_first_reply_in_date_range': date_of_first_reply_in_date_range,
                'date_of_last_reply_in_date_range': date_of_last_reply_in_date_range,
                'daily_sentiment_average_df_line_chart_labels': daily_sentiment_average_df_line_chart_labels,
-               'daily_sentiment_average_df_line_chart_data': daily_sentiment_average_df_line_chart_data
+               'daily_sentiment_average_df_line_chart_data': daily_sentiment_average_df_line_chart_data,
+               'total_daily_sentiment_stacked_bar_chart_labels': total_daily_sentiment_stacked_bar_chart_labels,
+               'total_daily_sentiment_stacked_bar_chart_negative_data': total_daily_sentiment_stacked_bar_chart_negative_data,
+               'total_daily_sentiment_stacked_bar_chart_neutral_data': total_daily_sentiment_stacked_bar_chart_neutral_data,
+               'total_daily_sentiment_stacked_bar_chart_positive_data': total_daily_sentiment_stacked_bar_chart_positive_data
                }
     # Pass the labels and data to charts.html so it can be visualized
     return render(request, 'polls/charts.html', context)
