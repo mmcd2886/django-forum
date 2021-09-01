@@ -3,8 +3,7 @@
 <!--format datetime for html form https://stackoverflow.com/questions/63099974/django-template-convert-datetime-local-format-->
 <a href="{% url 'polls:index'%}">Back to Threads List</a>
 <br>
-<a href="{% url 'polls:users'%}">users</a>
-<br>
+<a href="{% url 'polls:users'%}">Users</a>
 <br>
 <a href="{% url 'polls:detail' thread_info.thread_id %}">Replies for Thread</a>
 <br>
@@ -40,11 +39,11 @@ pie_chart method to create pie charts using the charts.js lib -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 
 <br>
-  <div id="container_3" style="width: 60%; margin: 0 auto;">
-    <canvas id="total_replies_bar"></canvas>
-  </div>
+<div id="container_1" style="width: 60%; margin: 0 auto;">
+<canvas id="total-replies-datetime-bar-canvas"></canvas>
+</div>
   <script>
-  var total_replies_datetime_bar_chart = {
+  var total_replies_datetime_bar = {
       type: 'line',
       data: {
         datasets: [{
@@ -59,7 +58,7 @@ pie_chart method to create pie charts using the charts.js lib -->
       options: {
         title: {
             display: true,
-            text: 'Total Replies'
+            text: 'Replies'
          },
         scales: {
           responsive: true,
@@ -75,13 +74,51 @@ pie_chart method to create pie charts using the charts.js lib -->
       }
     };
     </script>
+
+<br>
+<div id="container_6" style="width: 60%; margin: 0 auto;">
+<canvas id="daily-average-sentiment-line-canvas"></canvas>
+</div>
+  <script>
+  var daily_average_sentiment_line = {
+      type: 'line',
+      data: {
+        datasets: [{
+          data: {{ daily_sentiment_average_df_line_chart_data|safe }},
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1,
+          label: 'Average Score',
+          fill: 'false'
+        }],
+        labels: {{ daily_sentiment_average_df_line_chart_labels|safe }}
+      },
+      options: {
+        title: {
+            display: true,
+            text: 'Sentiment'
+         },
+        scales: {
+          responsive: true,
+          yAxes: [{
+            ticks: {
+                //will start the bar chart at zero
+                beginAtZero: true,
+                suggestedMax: 1,
+                suggestedMin: -1
+
+            }
+          }]
+        }
+      }
+    };
+    </script>
 <br>
 
-  <div id="container_2" style="width: 60%; margin: 0 auto;">
-    <canvas id="sentiment-pie-chart-2"></canvas>
-  </div>
+<div id="container_2" style="width: 60%; margin: 0 auto;">
+<canvas id="sentiment-for-no-quotes-pie-canvas" style="width: 60%; margin: 0 auto;"></canvas>
+</div>
   <script>
-    var sentiment_for_no_quotes = {
+    var sentiment_for_no_quotes_pie = {
       type: 'pie',
       data: {
         datasets: [{
@@ -99,18 +136,17 @@ pie_chart method to create pie charts using the charts.js lib -->
         responsive: true,
         title: {
             display: true,
-            text: 'Sentiment No Quotes'
+            text: 'Total Sentiment for replies without quotes'
         }
       }
     };
       </script>
-
 <br>
-  <div id="container_4" style="width: 60%; margin: 0 auto;">
-    <canvas id="total_replies_username_bar"></canvas>
-  </div>
+<div id="container_3" style="width: 60%; margin: 0 auto;">
+<canvas id="total-replies-username-bar-canvas"></canvas>
+</div>
   <script>
-  var total_replies_username_bar_chart = {
+  var total_replies_username_bar = {
       type: 'bar',
       data: {
         datasets: [{
@@ -142,12 +178,11 @@ pie_chart method to create pie charts using the charts.js lib -->
     };
     </script>
 <br>
-
-  <div id="container_5" style="width: 60%; margin: 0 auto;">
-    <canvas id="most_frequent_words_bar"></canvas>
-  </div>
+<div id="container_4" style="width: 60%; margin: 0 auto;">
+<canvas id="most-frequent-words-bar-canvas"></canvas>
+</div>
   <script>
-  var most_frequent_words_bar_chart = {
+  var most_frequent_words_bar = {
       type: 'horizontalBar',
       data: {
         datasets: [{
@@ -179,12 +214,11 @@ pie_chart method to create pie charts using the charts.js lib -->
     };
 </script>
 <br>
-
-<div id="container" style="width: 60%; margin: 0 auto;">
-    <canvas id="sentiment-pie-chart"></canvas>
-  </div>
+<div id="container_5" style="width: 60%; margin: 0 auto;">
+<canvas id="sentiment-for-quotes-pie-canvas"></canvas>
+</div>
   <script>
-    var sentiment_for_quotes = {
+    var sentiment_for_quotes_pie = {
       type: 'pie',
       data: {
         datasets: [{
@@ -202,27 +236,31 @@ pie_chart method to create pie charts using the charts.js lib -->
         responsive: true,
         title: {
             display: true,
-            text: 'Sentiment Quotes'
+            text: 'Total Sentiment for replies with quotes'
         }
       }
     };
 
       window.onload = function() {
 
-      var ctx = document.getElementById('sentiment-pie-chart').getContext('2d');
-      window.myPie = new Chart(ctx, sentiment_for_quotes);
+      var ctx = document.getElementById('sentiment-for-quotes-pie-canvas').getContext('2d');
+      window.myPie = new Chart(ctx, sentiment_for_quotes_pie);
 
-      var ctx_2 = document.getElementById('sentiment-pie-chart-2').getContext('2d');
-      window.myPie_2 = new Chart(ctx_2, sentiment_for_no_quotes);
+      var ctx_2 = document.getElementById('sentiment-for-no-quotes-pie-canvas').getContext('2d');
+      window.myPie_2 = new Chart(ctx_2, sentiment_for_no_quotes_pie);
 
-      var ctx_3 = document.getElementById('total_replies_bar').getContext('2d');
-      window.myBar = new Chart(ctx_3, total_replies_datetime_bar_chart);
+      var ctx_3 = document.getElementById('total-replies-datetime-bar-canvas').getContext('2d');
+      window.myBar = new Chart(ctx_3, total_replies_datetime_bar);
 
-      var ctx_4 = document.getElementById('total_replies_username_bar').getContext('2d');
-      window.myBar_2 = new Chart(ctx_4, total_replies_username_bar_chart);
+      var ctx_4 = document.getElementById('total-replies-username-bar-canvas').getContext('2d');
+      window.myBar_2 = new Chart(ctx_4, total_replies_username_bar);
 
-      var ctx_5 = document.getElementById('most_frequent_words_bar').getContext('2d');
-      window.myBar_3 = new Chart(ctx_5, most_frequent_words_bar_chart);
+      var ctx_5 = document.getElementById('most-frequent-words-bar-canvas').getContext('2d');
+      window.myBar_3 = new Chart(ctx_5, most_frequent_words_bar);
+
+      var ctx_6 = document.getElementById('daily-average-sentiment-line-canvas').getContext('2d');
+      window.myLine = new Chart(ctx_6, daily_average_sentiment_line);
+
 
     };
 
