@@ -5,36 +5,44 @@
 <br>
 <a href="{% url 'polls:users'%}">Users</a>
 <br>
+<br>
 <a href="{% url 'polls:detail' thread_info.thread_id %}">Replies for Thread</a>
 <br>
 <h2> {{ thread_info.title }} </h2>
 {% block content %}
 <!--form that will filter date range of posts -->
 <form method="POST">{% csrf_token %}
-  <p>Start date<input type = 'datetime-local'  name='start_date'
+  <p>Start: <input type = 'datetime-local'  name='start_date'
                       value="{{date_of_first_reply_in_date_range|date:'Y-m-d'}}T{{date_of_first_reply_in_date_range|time:'H:i'}}"
                       min="{{date_of_first_reply|date:'Y-m-d'}}T{{date_of_first_reply|time:'H:i'}}"
                       max="{{date_of_last_reply|date:'Y-m-d'}}T{{date_of_last_reply|time:'H:i'}}">
   </p>
-  <p>End date<input type = 'datetime-local'  name='end_date'
+  <p>End: <input type = 'datetime-local'  name='end_date'
                     value="{{date_of_last_reply_in_date_range|date:'Y-m-d'}}T{{date_of_last_reply_in_date_range|time:'H:i'}}"
                     min="{{date_of_first_reply|date:'Y-m-d'}}T{{date_of_first_reply|time:'H:i'}}"
                     max="{{date_of_last_reply|date:'Y-m-d'}}T{{date_of_last_reply|time:'H:i'}}">
-  </p>
+
   <button type="submit">Submit</button>
+  </p>
 </form>
 <br>
 <a href="{% url 'polls:pie_chart' thread_info.thread_id %}">Unfilter</a>
 <!--filter by username form-->
 <form method="POST">{% csrf_token %}
   <label for="fname">Filter by Username:</label><br>
-  <input type="text" id="fname" name="fname"><br>
-  <br>
+  <input type="text" id="fname" name="fname">
   <input type="submit" value="Submit">
 </form>
+
 <br>
-<form action = "{% url 'polls:pie_chart_no_quotes' thread_info.thread_id %}">
-  <input type="submit" value="Exclude quoted replies" />
+<form method="POST">{% csrf_token %}
+  <label for="quote_filter">Include Quoted Replies:</label><br>
+  <select id="quote_filter" name="quote_filter">
+      <option disabled selected value> -- select an option -- </option>
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+  </select>
+  <input type="submit" value="Submit">
 </form>
 
 <!-- add the charts.js library to page -->
@@ -52,6 +60,8 @@ pie_chart method to create pie charts using the charts.js lib -->
       data: {
         datasets: [{
           data: {{ total_replies_datetime_bar_chart_data|safe }},
+          pointRadius: 2,
+          pointHoverRadius: 5,
           borderColor: 'rgb(75, 192, 192)',
           tension: 0.1,
           label: 'Total Replies',
@@ -78,7 +88,7 @@ pie_chart method to create pie charts using the charts.js lib -->
       }
     };
     </script>
-
+<!--
 <br>
 <div id="container_6" style="width: 60%; margin: 0 auto;">
 <canvas id="daily-average-sentiment-line-canvas"></canvas>
@@ -116,9 +126,8 @@ pie_chart method to create pie charts using the charts.js lib -->
       }
     };
     </script>
+-->
 <br>
-<br>
-
 <div id="container_7" style="width: 60%; margin: 0 auto;">
 <canvas id="daily-total-sentiment-stacked-bar-canvas"></canvas>
 </div>
@@ -138,12 +147,16 @@ pie_chart method to create pie charts using the charts.js lib -->
           data: {{ total_daily_sentiment_stacked_bar_chart_neutral_data|safe }},
           },
           {
-          label: 'positive',
+          label: 'Positive',
           backgroundColor: "#56d798",
           data: {{ total_daily_sentiment_stacked_bar_chart_positive_data|safe }},
         }],
       },
 options: {
+title: {
+    display: true,
+    text: 'Sentiment'
+    },
     scales: {
       xAxes: [{
         stacked: true,
@@ -162,10 +175,8 @@ options: {
     responsive: true,
   }
 };
-    </script>
+</script>
 <br>
-
-
 
 <div id="container_3" style="width: 60%; margin: 0 auto;">
 <canvas id="total-replies-username-bar-canvas"></canvas>
@@ -280,8 +291,10 @@ options: {
       var ctx_5 = document.getElementById('most-frequent-words-bar-canvas').getContext('2d');
       window.myBar_3 = new Chart(ctx_5, most_frequent_words_bar);
 
+      /*
       var ctx_6 = document.getElementById('daily-average-sentiment-line-canvas').getContext('2d');
       window.myLine = new Chart(ctx_6, daily_average_sentiment_line);
+      */
 
       var ctx_7 = document.getElementById('daily-total-sentiment-stacked-bar-canvas').getContext('2d');
       window.myStacked = new Chart(ctx_7, daily_total_sentiment_stacked_bar);
