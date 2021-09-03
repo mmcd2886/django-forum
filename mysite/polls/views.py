@@ -82,18 +82,22 @@ def detail(request, thread_id):
 # https://simpleisbetterthancomplex.com/tutorial/2020/01/19/how-to-use-chart-js-with-django.html
 def pie_chart(request, thread_id):
     # if statement will run when a date range is submitted on the charts page. This will filter out any posts not
-    # within the date range
+    # within the date range. For date_picker_end_date I hardcode seconds i.e. ':59'. This is because a user can only
+    # enter hours and minutes in the range field, the seconds will default to ':00', but I want all the posts for
+    # that minute so I add :59 seconds. e.g. it will search 1:15:00, but I want all replies that occurred during the
+    # 15 minute mark e.g. a post at 1:15:30 will not get included.
     if request.method == 'POST' and 'start_date' in request.POST:
         date_picker_start_date = request.POST['start_date']
-        date_picker_end_date = request.POST['end_date']
+        date_picker_end_date = request.POST['end_date'] + ':59'
         replies_from_thread_df = pd.DataFrame.from_records(Posts.objects.filter(thread_id=thread_id).filter(
-            date_time__range=[date_picker_start_date, date_picker_end_date]).values())
+            date_time__gte=date_picker_start_date, date_time__lte=date_picker_end_date).values())
+
     # statement will run if username is submitted in the form. Will only show charts for this username
     elif request.method == 'POST' and 'fname' in request.POST:
         username_filter = request.POST['fname']
         replies_from_thread_df = pd.DataFrame.from_records(
             Posts.objects.filter(thread_id=thread_id).filter(username=username_filter).values())
-    # will filter out quoted replies if Inlude Quoted Replies box is Yes or No
+    # will filter out quoted replies if Include Quoted Replies box is Yes or No
     elif request.method == 'POST' and 'quote_filter' in request.POST:
         quote_filter = request.POST['quote_filter']
         print(quote_filter)
@@ -112,15 +116,14 @@ def pie_chart(request, thread_id):
         # https://stackoverflow.com/questions/11697887/converting-django-queryset-to-pandas-dataframe
         replies_from_thread_df = pd.DataFrame.from_records(Posts.objects.filter(thread_id=thread_id).values())
 
+    # dates for the date range picker forms
+    date_of_first_reply_in_date_range = replies_from_thread_df.date_time.min()
+    date_of_last_reply_in_date_range = replies_from_thread_df.date_time.max()
+
     # get the dates of the first and last replies posted
     df_for_getting_dates = pd.DataFrame.from_records(Posts.objects.filter(thread_id=thread_id).values())
     date_of_first_reply = df_for_getting_dates.date_time.min()
     date_of_last_reply = df_for_getting_dates.date_time.max()
-
-    # get the dates of the first last replies after the dates have been filtered within a date range using the date
-    # picker
-    date_of_first_reply_in_date_range = replies_from_thread_df.date_time.min()
-    date_of_last_reply_in_date_range = replies_from_thread_df.date_time.max()
 
     # get data for the thread so that you can display information for it in charts.html
     thread_info = Threads.objects.get(thread_id=thread_id)
