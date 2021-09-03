@@ -1,14 +1,26 @@
 <!--charts.js tutorial https://simpleisbetterthancomplex.com/tutorial/2020/01/19/how-to-use-chart-js-with-django.html-->
 <!--https://stackoverflow.com/questions/24555823/multiple-chartjs-in-the-same-page/40401048-->
 <!--format datetime for html form https://stackoverflow.com/questions/63099974/django-template-convert-datetime-local-format-->
-<a href="{% url 'polls:index'%}">Back to Threads List</a>
-<br>
-<a href="{% url 'polls:users'%}">Users</a>
-<br>
-<br>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<!--nav bar -->
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+  <ul class="navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'polls:index'%}">Threads</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'polls:users'%}">Users</a>
+    </li>
+  </ul>
+</nav>
+
+<h2> {{ thread_info.title }} </h2>
 <a href="{% url 'polls:detail' thread_info.thread_id %}">Replies for Thread</a>
 <br>
-<h2> {{ thread_info.title }} </h2>
+<br>
 {% block content %}
 <!--form that will filter date range of posts -->
 <form method="POST">{% csrf_token %}
@@ -22,27 +34,26 @@
                     min="{{date_of_first_reply|date:'Y-m-d'}}T{{date_of_first_reply|time:'H:i'}}"
                     max="{{date_of_last_reply|date:'Y-m-d'}}T{{date_of_last_reply|time:'H:i'}}">
 
-  <button type="submit">Submit</button>
+  <button type="submit" class="btn btn-primary"> Submit</button>
   </p>
 </form>
-<br>
-<a href="{% url 'polls:pie_chart' thread_info.thread_id %}">Unfilter</a>
+
+<!--<a href="{% url 'polls:pie_chart' thread_info.thread_id %}">Unfilter</a>-->
 <!--filter by username form-->
-<form method="POST">{% csrf_token %}
-  <label for="fname">Filter by Username:</label><br>
-  <input type="text" id="fname" name="fname">
-  <input type="submit" value="Submit">
+<form method="POST" class="form-inline">{% csrf_token %}
+  <label for="fname">Username: </label>
+  <input type="text" id="fname" name="fname" class="form-control">
+  <button type="submit" class="btn btn-primary"> Submit</button>
 </form>
 
-<br>
 <form method="POST">{% csrf_token %}
-  <label for="quote_filter">Include Quoted Replies:</label><br>
+  <label for="quote_filter">Include Quoted Replies: </label>
   <select id="quote_filter" name="quote_filter">
-      <option disabled selected value> -- select an option -- </option>
+      <option disabled selected value>-</option>
       <option value="yes">Yes</option>
       <option value="no">No</option>
   </select>
-  <input type="submit" value="Submit">
+  <button type="submit" class="btn btn-primary"> Submit</button>
 </form>
 
 <!-- add the charts.js library to page -->

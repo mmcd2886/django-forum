@@ -3,6 +3,19 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
 <head>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
+
+<!--nav bar -->
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+  <ul class="navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'polls:index'%}">Threads</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'polls:users'%}">Users</a>
+    </li>
+  </ul>
+</nav>
+
 <!--the table class below uses bootstrap to format the table. The first set of <th> tags are columns names. The following
 <td> tags use django variables that display the data in the specified column names-->
 <div>
