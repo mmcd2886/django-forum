@@ -38,23 +38,28 @@
   </p>
 </form>
 
-<!--<a href="{% url 'polls:pie_chart' thread_info.thread_id %}">Unfilter</a>-->
-<!--filter by username form-->
-<form method="POST" class="form-inline">{% csrf_token %}
-  <label for="fname">Username: </label>
-  <input type="text" id="fname" name="fname" class="form-control">
-  <button type="submit" class="btn btn-primary"> Submit</button>
-</form>
 
+<!--filter by username form-->
+<div class=form-group">
+<form method="POST">{% csrf_token %}
+  <input type="text" id="fname" name="fname" class="form-control-md" placeholder="Username">
+  <button type="submit" class="btn btn-primary"> Submit</button>
+  <a href="{% url 'polls:pie_chart' thread_info.thread_id %}">Unfilter</a>
+</form>
+</div>
+
+<!--Include/Exclude quoted replies dropdown -->
+<div class="form-group form-inline">
 <form method="POST">{% csrf_token %}
   <label for="quote_filter">Include Quoted Replies: </label>
-  <select id="quote_filter" name="quote_filter">
+  <select id="quote_filter" name="quote_filter" class="form-control" style="width:auto;">
       <option disabled selected value>-</option>
       <option value="yes">Yes</option>
       <option value="no">No</option>
   </select>
   <button type="submit" class="btn btn-primary"> Submit</button>
 </form>
+</div>
 
 <!-- add the charts.js library to page -->
 <!-- create two variables (sentiment_for_quotes, sentiment_for_no_quotes) that will use the data passed from views.py

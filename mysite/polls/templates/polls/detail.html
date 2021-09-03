@@ -24,13 +24,16 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
 <a href="{% url 'polls:pie_chart' thread_info.thread_id %}">Charts for Thread</a>
 <br>
 <br>
-<!--filter by user name form-->
-<form method="POST" class="form-inline">{% csrf_token %}
-  <label for="fname">Username:</label><br>
-  <input type="text" class="form-control" id="fname" name="fname"><br>
+
+<!--filter by username form-->
+<div class=form-group">
+<form method="POST">{% csrf_token %}
+  <input type="text" id="fname" name="fname" class="form-control-md" placeholder="Username">
   <button type="submit" class="btn btn-primary"> Submit</button>
     <a href="{% url 'polls:detail' thread_info.thread_id %}">Unfilter</a>
 </form>
+</div>
+
 <br>
 <div>
 <table class="table table-bordered">
