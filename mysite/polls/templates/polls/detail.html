@@ -2,6 +2,11 @@
 https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-django.html-->
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+        #margins {
+        margin: 10px;
+       }
+    </style>
 </head>
 
 <!--nav bar -->
@@ -16,6 +21,7 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
   </ul>
 </nav>
 
+<div id="margins">
 <!--the table class below uses bootstrap to format the table. The first set of <th> tags are columns names. The following
 <td> tags use django variables that display the data in the specified column names. The first set of <td> tags
  add the thread creators post to the table, all of the other replies are looped through and added to the table.-->
@@ -30,8 +36,11 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
 <form method="POST">{% csrf_token %}
   <input type="text" id="fname" name="fname" class="form-control-md" placeholder="Username">
   <button type="submit" class="btn btn-primary"> Submit</button>
-    <a href="{% url 'polls:detail' thread_info.thread_id %}">Unfilter</a>
+    <a href="{% url 'polls:detail' thread_info.thread_id %}">Show All</a>
 </form>
+</div>
+
+<!-- closing tag for div id="margins> -->
 </div>
 
 <br>

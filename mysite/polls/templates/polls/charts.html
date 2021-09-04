@@ -2,9 +2,15 @@
 <!--https://stackoverflow.com/questions/24555823/multiple-chartjs-in-the-same-page/40401048-->
 <!--format datetime for html form https://stackoverflow.com/questions/63099974/django-template-convert-datetime-local-format-->
 <head>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <style>
+  #margins {
+  margin: 10px;
+  }
+</style>
 </head>
 
+<body>
 <!--nav bar -->
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
   <ul class="navbar-nav">
@@ -17,6 +23,7 @@
   </ul>
 </nav>
 
+<div id="margins">
 <h2> {{ thread_info.title }} </h2>
 <a href="{% url 'polls:detail' thread_info.thread_id %}">Replies for Thread</a>
 <br>
@@ -24,12 +31,12 @@
 {% block content %}
 <!--form that will filter date range of posts -->
 <form method="POST">{% csrf_token %}
-  <p>Start: <input type = 'datetime-local'  name='start_date'
+  <p><input type = 'datetime-local'  name='start_date'
                       value="{{date_of_first_reply_in_date_range|date:'Y-m-d'}}T{{date_of_first_reply_in_date_range|time:'H:i'}}"
                       min="{{date_of_first_reply|date:'Y-m-d'}}T{{date_of_first_reply|time:'H:i'}}"
                       max="{{date_of_last_reply|date:'Y-m-d'}}T{{date_of_last_reply|time:'H:i'}}">
   </p>
-  <p>End: <input type = 'datetime-local'  name='end_date'
+  <p><input type = 'datetime-local'  name='end_date'
                     value="{{date_of_last_reply_in_date_range|date:'Y-m-d'}}T{{date_of_last_reply_in_date_range|time:'H:i'}}"
                     min="{{date_of_first_reply|date:'Y-m-d'}}T{{date_of_first_reply|time:'H:i'}}"
                     max="{{date_of_last_reply|date:'Y-m-d'}}T{{date_of_last_reply|time:'H:i'}}">
@@ -45,7 +52,7 @@
 <form method="POST">{% csrf_token %}
   <input type="text" id="fname" name="fname" class="form-control-md" placeholder="Username">
   <button type="submit" class="btn btn-primary"> Submit</button>
-  <a href="{% url 'polls:pie_chart' thread_info.thread_id %}">Unfilter</a>
+  <a href="{% url 'polls:pie_chart' thread_info.thread_id %}">Show All</a>
 </form>
 </div>
 
@@ -60,6 +67,9 @@
   </select>
   <button type="submit" class="btn btn-primary"> Submit</button>
 </form>
+</div>
+
+<!--closing tag for <div style='margins'>-->
 </div>
 
 <!-- add the charts.js library to page -->
@@ -320,3 +330,4 @@ title: {
   </script>
 
 {% endblock %}
+</body>

@@ -2,6 +2,11 @@
 https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-django.html-->
 <head>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <style>
+  #margins {
+  margin: 10px;
+  }
+</style>
 </head>
 
 <!--nav bar -->
@@ -16,6 +21,7 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
   </ul>
 </nav>
 
+<div id="margins">
 <!--the table class below uses bootstrap to format the table. The first set of <th> tags are columns names. The following
 <td> tags use django variables that display the data in the specified column names-->
 <div>
@@ -74,4 +80,7 @@ This code uses bootstrap and prevents all pages from showing if there are severa
      <li class="disabled page-item"><span class="page-link">&raquo;</span></li>
     {% endif %}
   </ul>
+</div>
+
+<!--closing tag for div id="margins"> -->
 </div>

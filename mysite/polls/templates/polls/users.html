@@ -1,5 +1,10 @@
 <head>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <style>
+      #margins {
+      margin: 10px;
+      }
+    </style>
 </head>
 
 <!--nav bar -->
@@ -14,6 +19,7 @@
   </ul>
 </nav>
 
+<div id="margins">
 <br>
 <div class=form-group">
 <form method="POST">{% csrf_token %}
@@ -23,11 +29,9 @@
 </div>
 <br>
 
-<!-- this is bootstrap4. may not work with other versions
-https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-django.html-->
-<head>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-</head>
+
+
+
 <!--the table class below uses bootstrap to format the table. The first set of <th> tags are columns names. The following
 <td> tags use django variables that display the data in the specified column names-->
 <div>
@@ -47,4 +51,7 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
     {% endfor %}
   </tbody>
 </table>
+</div>
+
+<!--closing tag for div id="margins" -->
 </div>
