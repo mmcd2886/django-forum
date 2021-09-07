@@ -11,10 +11,10 @@
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
   <ul class="navbar-nav">
     <li class="nav-item">
-      <a class="nav-link" href="{% url 'polls:index'%}">Threads</a>
+      <a class="nav-link" href="{% url 'forum:index'%}">Threads</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="{% url 'polls:users'%}">Users</a>
+      <a class="nav-link" href="{% url 'forum:users'%}">Users</a>
     </li>
   </ul>
 </nav>
@@ -45,7 +45,7 @@
   <tbody>
     {% for thread_title, total_replies, thread_id in zipped_replies_title_list %}
       <tr>
-        <td><a href="{% url 'polls:detail' thread_id %}"> {{ thread_title }} </a></td>
+        <td><a href="{% url 'forum:detail' thread_id %}"> {{ thread_title }} </a></td>
         <td>{{ total_replies }}</td>
       </tr>
     {% endfor %}

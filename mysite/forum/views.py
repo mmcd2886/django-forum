@@ -35,7 +35,7 @@ def index(request):
     # The render() function takes the request object as its first argument, a template name
     # as its second argument and a dictionary as its optional third argument. It returns an
     # HttpResponse object of the given template rendered with the given context.
-    return render(request, 'polls/index.html', context)
+    return render(request, 'forum/index.html', context)
 
 
 def detail(request, thread_id):
@@ -47,7 +47,7 @@ def detail(request, thread_id):
         posts = Posts.objects.filter(thread_id=thread_id).filter(username=username_filter).order_by('date_time')
         thread_info = Threads.objects.get(thread_id=thread_id)
         context = {'posts': posts, 'thread_info': thread_info}
-        return render(request, 'polls/detail.html', context)
+        return render(request, 'forum/detail.html', context)
     else:  # get the replies from the thread
         post_list = Posts.objects.filter(thread_id=thread_id).order_by('date_time')
 
@@ -75,7 +75,7 @@ def detail(request, thread_id):
         # if page is empty then return the last page
         posts = page_number.page(paginator.num_pages)
     context = {'pagination_page_range': pagination_page_range, 'posts': posts, 'thread_info': thread_info}
-    return render(request, 'polls/detail.html', context)
+    return render(request, 'forum/detail.html', context)
 
 
 # Tutorial for visualizing using charts.js
@@ -267,7 +267,7 @@ def pie_chart(request, thread_id):
                'total_daily_sentiment_stacked_bar_chart_positive_data': total_daily_sentiment_stacked_bar_chart_positive_data
                }
     # Pass the labels and data to charts.html so it can be visualized
-    return render(request, 'polls/charts.html', context)
+    return render(request, 'forum/charts.html', context)
 
 def users(request):
     # this is for finding all threads a user has replied to
@@ -297,6 +297,6 @@ def users(request):
 
         context = {'zipped_replies_title_list': zipped_replies_title_list
                    }
-        return render(request, 'polls/users.html', context)
+        return render(request, 'forum/users.html', context)
     else:
-        return render(request, 'polls/users.html')
+        return render(request, 'forum/users.html')

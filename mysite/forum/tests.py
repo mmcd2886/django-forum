@@ -14,5 +14,5 @@ class PostsModelTests(TestCase):
         future_post = Posts(date_time=time)
         self.assertIs(future_post.was_posted_recently(), False)
 
-# to run test - 'python manage.py test polls'
+# to run test - 'python manage.py test forum'
 

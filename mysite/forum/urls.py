@@ -3,7 +3,7 @@ from django.urls import path
 from . import views
 
 # Below are different url paths.
-app_name = 'polls'
+app_name = 'forum'
 urlpatterns = [
     path('', views.index, name='index'),
     path('<int:thread_id>/', views.detail, name='detail'),
