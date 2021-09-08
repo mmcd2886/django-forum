@@ -1,8 +1,10 @@
 import pandas as pd
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 import nltk
 from nltk.corpus import stopwords
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import redirect
 
 from .models import Posts
 from .models import Threads
@@ -97,17 +99,19 @@ def pie_chart(request, thread_id):
         username_filter = request.GET.get('fname')
         replies_from_thread_df = pd.DataFrame.from_records(
             Posts.objects.filter(thread_id=thread_id).filter(username=username_filter).values())
+        # data dictionary len will be 0 if username does not exist. reload page in this case.
+        if len(replies_from_thread_df) == 0:
+            #raise Http404("Username Not Found")
+            return redirect(request.path_info)
+
     # will filter out quoted replies if Include Quoted Replies box is Yes or No
     elif request.method == 'GET' and 'quote_filter' in request.GET:
         quote_filter = request.GET.get('quote_filter')
-        print(quote_filter)
         if quote_filter == 'no':
             replies_from_thread_df = pd.DataFrame.from_records(Posts.objects.filter(thread_id=thread_id).values())
             replies_from_thread_df = replies_from_thread_df[replies_from_thread_df["quoted"] == "No quote"]
-            print('no')
         else:
             replies_from_thread_df = pd.DataFrame.from_records(Posts.objects.filter(thread_id=thread_id).values())
-            print("yes")
 
     # will run when page first loads, and no form submissions have been made on the page.
     else:
