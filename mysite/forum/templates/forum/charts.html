@@ -30,7 +30,7 @@
 <br>
 {% block content %}
 <!--form that will filter date range of posts -->
-<form method="POST">{% csrf_token %}
+<form method="GET">
   <p><input type = 'datetime-local'  name='start_date'
                       value="{{date_of_first_reply_in_date_range|date:'Y-m-d'}}T{{date_of_first_reply_in_date_range|time:'H:i'}}"
                       min="{{date_of_first_reply|date:'Y-m-d'}}T{{date_of_first_reply|time:'H:i'}}"
@@ -49,7 +49,7 @@
 
 <!--filter by username form-->
 <div class=form-group">
-<form method="POST">{% csrf_token %}
+<form method="GET">
   <input type="text" id="fname" name="fname" class="form-control-md" placeholder="Username">
   <button type="submit" class="btn btn-primary"> Submit</button>
   <a href="{% url 'forum:pie_chart' thread_info.thread_id %}">Show All</a>
@@ -58,7 +58,7 @@
 
 <!--Include/Exclude quoted replies dropdown -->
 <div class="form-group form-inline">
-<form method="POST">{% csrf_token %}
+<form method="GET">
   <label for="quote_filter">Include Quoted Replies: </label>
   <select id="quote_filter" name="quote_filter" class="form-control" style="width:auto;">
       <option disabled selected value>-</option>

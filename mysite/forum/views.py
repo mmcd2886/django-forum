@@ -39,9 +39,9 @@ def index(request):
 
 
 def detail(request, thread_id):
-    # if will run when filtering by username
-    if request.method == 'POST':
-        username_filter = request.POST['fname']
+    # if will run when username is submitted in form
+    if request.method == 'GET' and 'fname' in request.GET:
+        username_filter = request.GET.get('fname')
 
         # posts should be changed to post_list. This section is interim until i figure out pagination
         posts = Posts.objects.filter(thread_id=thread_id).filter(username=username_filter).order_by('date_time')
@@ -86,20 +86,20 @@ def pie_chart(request, thread_id):
     # enter hours and minutes in the range field, the seconds will default to ':00', but I want all the posts for
     # that minute so I add :59 seconds. e.g. it will search 1:15:00, but I want all replies that occurred during the
     # 15 minute mark e.g. a post at 1:15:30 will not get included.
-    if request.method == 'POST' and 'start_date' in request.POST:
-        date_picker_start_date = request.POST['start_date']
-        date_picker_end_date = request.POST['end_date'] + ':59'
+    if request.method == 'GET' and 'start_date' in request.GET:
+        date_picker_start_date = request.GET.get('start_date')
+        date_picker_end_date = request.GET.get('end_date') + ':59'
         replies_from_thread_df = pd.DataFrame.from_records(Posts.objects.filter(thread_id=thread_id).filter(
             date_time__gte=date_picker_start_date, date_time__lte=date_picker_end_date).values())
 
     # statement will run if username is submitted in the form. Will only show charts for this username
-    elif request.method == 'POST' and 'fname' in request.POST:
-        username_filter = request.POST['fname']
+    elif request.method == 'GET' and 'fname' in request.GET:
+        username_filter = request.GET.get('fname')
         replies_from_thread_df = pd.DataFrame.from_records(
             Posts.objects.filter(thread_id=thread_id).filter(username=username_filter).values())
     # will filter out quoted replies if Include Quoted Replies box is Yes or No
-    elif request.method == 'POST' and 'quote_filter' in request.POST:
-        quote_filter = request.POST['quote_filter']
+    elif request.method == 'GET' and 'quote_filter' in request.GET:
+        quote_filter = request.GET.get('quote_filter')
         print(quote_filter)
         if quote_filter == 'no':
             replies_from_thread_df = pd.DataFrame.from_records(Posts.objects.filter(thread_id=thread_id).values())
@@ -269,11 +269,12 @@ def pie_chart(request, thread_id):
     # Pass the labels and data to charts.html so it can be visualized
     return render(request, 'forum/charts.html', context)
 
+
 def users(request):
     # this is for finding all threads a user has replied to
     # when a user enters a username into the text box and submits get all posts from that user
-    if request.method == 'POST':
-        username_filter = request.POST['fname']
+    if request.method == 'GET':
+        username_filter = request.GET.get('fname')
         posts = Posts.objects.filter(username=username_filter).order_by('date_time')
         thread_title_list = []
         thread_id_list = []
