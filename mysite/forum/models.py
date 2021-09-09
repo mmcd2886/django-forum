@@ -23,6 +23,11 @@ class Threads(models.Model):
     percent_distinct_replies = models.CharField(max_length=1000, null=True, blank=True) # this will need to allow null values
     watch_list = models.CharField(max_length=3)
 
+    # This method is for a test
+    def was_created_recently(self):
+        now = timezone.now()
+        return now - datetime.timedelta(days=1) <= self.date_time <= now
+
     def __str__(self):
         return self.username
 
@@ -47,11 +52,6 @@ class Posts(models.Model):
     # a unique key so a users posts are not saved twice to the DB
     class Meta:
         constraints = [models.UniqueConstraint(fields=['username', 'date_time'], name='composite_key')]
-
-    # This method is for a test
-    def was_posted_recently(self):
-        now = timezone.now()
-        return now - datetime.timedelta(days=1) <= self.date_time <= now
 
     def __str__(self):
         return self.username
