@@ -1,7 +1,8 @@
 import pandas as pd
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 import nltk
+from django.urls import reverse
 from nltk.corpus import stopwords
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import redirect
@@ -101,7 +102,7 @@ def pie_chart(request, thread_id):
             Posts.objects.filter(thread_id=thread_id).filter(username=username_filter).values())
         # data dictionary len will be 0 if username does not exist. reload page in this case.
         if len(replies_from_thread_df) == 0:
-            #raise Http404("Username Not Found")
+            # raise Http404("Username Not Found")
             return redirect(request.path_info)
 
     # will filter out quoted replies if Include Quoted Replies box is Yes or No
@@ -305,3 +306,52 @@ def users(request):
         return render(request, 'forum/users.html', context)
     else:
         return render(request, 'forum/users.html')
+
+
+def watch_update(request, thread_id):
+    # watch-2 will be submitted from the watching page and 'watch' will be submitted from the index page
+    # this will update whether a page is being watched by updating wathc_list='yes' or 'no' in db
+    if 'watch-2' in request.POST:
+        icon_submit_yes_no = request.POST.get("watch-2")
+        thread = get_object_or_404(Threads, pk=thread_id)
+        thread.watch_list = icon_submit_yes_no
+        thread.save()
+        return HttpResponseRedirect(reverse('forum:watch'))
+    else:
+        if 'watch' in request.POST:
+            icon_submit_yes_no = request.POST.get("watch")
+            thread = get_object_or_404(Threads, pk=thread_id)
+            thread.watch_list = icon_submit_yes_no
+            thread.save()
+            return HttpResponseRedirect(reverse('forum:index'))
+
+
+def watch(request):
+    # order threads by date_time. notice the '-' im front of 'last_date_scraped. The '-' orders it by DESC. Show only
+    # threads with watch_list='yes'
+    threads_list = Threads.objects.filter(watch_list='yes').order_by('-last_date_scraped')
+    # get the page number from the URL
+    page_number = request.GET.get('page', 1)
+    # https://www.geeksforgeeks.org/how-to-add-pagination-in-django-project/
+    # paginator takes list of objects as first argument and number per page as second
+    paginator = Paginator(threads_list, 50)
+    # will use this to prevent every page number from showing in pagination. Will only get numbers on either side of
+    # current page
+    # https://docs.djangoproject.com/en/3.2/ref/paginator/#django.core.paginator.Paginator.get_elided_page_range
+    # https://nemecek.be/blog/105/how-to-use-elided-pagination-in-django-and-solve-too-many-pages-problem
+    pagination_page_range = paginator.get_elided_page_range(number=page_number)
+
+    try:
+        thread_info = paginator.get_page(page_number)  # returns the desired page object
+    except PageNotAnInteger:
+        # if page_number is not an integer then assign the first page
+        thread_info = paginator.page(1)
+    except EmptyPage:
+        # if page is empty then return last page
+        thread_info = page_number.page(paginator.num_pages)
+    context = {'pagination_page_range': pagination_page_range, 'threads': thread_info}
+
+    # The render() function takes the request object as its first argument, a template name
+    # as its second argument and a dictionary as its optional third argument. It returns an
+    # HttpResponse object of the given template rendered with the given context.
+    return render(request, 'forum/watch.html', context)

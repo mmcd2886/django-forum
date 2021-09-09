@@ -21,6 +21,7 @@ class Threads(models.Model):
     total_replies = models.CharField(max_length=5000000, null=True, blank=True) # this will need to allow null values
     total_distinct_usernames = models.CharField(max_length=100000, null=True, blank=True) # this will need to allow null values
     percent_distinct_replies = models.CharField(max_length=1000, null=True, blank=True) # this will need to allow null values
+    watch_list = models.CharField(max_length=3)
 
     def __str__(self):
         return self.username
