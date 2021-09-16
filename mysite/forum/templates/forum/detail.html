@@ -25,7 +25,7 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
 <div id="margins">
 <!--the table class below uses bootstrap to format the table. The first set of <th> tags are columns names. The following
 <td> tags use django variables that display the data in the specified column names. The first set of <td> tags
- add the thread creators post to the table, all of the other replies are looped through and added to the table.-->
+ add the thread creators reply to the table, all the other replies are looped through and added to the table.-->
 <br>
 <h3>{{ thread_info.title }}</h3>
 <a href="{% url 'forum:pie_chart' thread_info.thread_id %}">Charts</a>
@@ -57,7 +57,7 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
   </thead>
   <tbody>
   <!--Use this if statement to only show the thread creators reply in the table on the first page -->
-    {% if posts.number == 1 %}
+    {% if replies.number == 1 %}
        <tr>
           <td>{{ thread_info.username }} (OP)</td>
           <td></td>
@@ -68,15 +68,15 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
           <td></td>
       </tr>
     {% endif %}
-    {% for post in posts %}
+    {% for reply in replies %}
       <tr>
-          <td>{{ post.username }}</td>
-          <td>{{ post.quoted }}</td>
-          <td>{{ post.replies }}</td>
-          <td>{{ post.sentiment }}</td>
-          <td>{{ post.score }}</td>
-          <td>{{ post.date_time|date:'Y-m-d H:i' }}</td>
-          <td>{{ post.thread_page }}</td>
+          <td>{{ reply.username }}</td>
+          <td>{{ reply.quoted }}</td>
+          <td>{{ reply.replies }}</td>
+          <td>{{ reply.sentiment }}</td>
+          <td>{{ reply.score }}</td>
+          <td>{{ reply.date_time|date:'Y-m-d H:i' }}</td>
+          <td>{{ reply.thread_page }}</td>
       </tr>
     {% endfor %}
   </tbody>
@@ -86,20 +86,20 @@ https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-d
 This code uses bootstrap and prevents all pages from showing if there are several pages.-->
 <div>
   <ul class="pagination justify-content-center flex-wrap mt-2 mb-4">
-    {% if posts.has_previous %}
-      <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">&laquo;</a></li>
+    {% if replies.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ replies.previous_page_number }}">&laquo;</a></li>
     {% else %}
       <li class="disabled page-item"><span class="page-link">&laquo;</span></li>
     {% endif %}
-    {% for post in pagination_page_range %}
-      {% if posts.number == post %}
-        <li class="active page-item"><span class="page-link">{{ post }}<span class="sr-only">(current)</span></span></li>
+    {% for reply in pagination_page_range %}
+      {% if replies.number == reply %}
+        <li class="active page-item"><span class="page-link">{{ reply }}<span class="sr-only">(current)</span></span></li>
       {% else %}
-        <li class="page-item"><a class="page-link" href="?page={{ post }}">{{ post }}</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ reply }}">{{ reply }}</a></li>
       {% endif %}
     {% endfor %}
-    {% if posts.has_next %}
-      <li class="page-item"><a class="page-link" href="?page={{ posts.next_page_number }}">&raquo;</a></li>
+    {% if replies.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ replies.next_page_number }}">&raquo;</a></li>
     {% else %}
       <li class="disabled page-item"><span class="page-link">&raquo;</span></li>
     {% endif %}

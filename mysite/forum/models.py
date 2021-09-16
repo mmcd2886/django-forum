@@ -1,4 +1,4 @@
-# python3 manage.py dbshell
+# python manage.py dbshell
 
 import datetime
 from django.db import models

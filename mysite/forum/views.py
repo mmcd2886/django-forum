@@ -24,7 +24,6 @@ def index(request):
     # https://docs.djangoproject.com/en/3.2/ref/paginator/#django.core.paginator.Paginator.get_elided_page_range
     # https://nemecek.be/blog/105/how-to-use-elided-pagination-in-django-and-solve-too-many-pages-problem
     pagination_page_range = paginator.get_elided_page_range(number=page_number)
-
     try:
         thread_info = paginator.get_page(page_number)  # returns the desired page object
     except PageNotAnInteger:
@@ -34,7 +33,6 @@ def index(request):
         # if page is empty then return last page
         thread_info = page_number.page(paginator.num_pages)
     context = {'pagination_page_range': pagination_page_range, 'threads': thread_info}
-
     # The render() function takes the request object as its first argument, a template name
     # as its second argument and a dictionary as its optional third argument. It returns an
     # HttpResponse object of the given template rendered with the given context.
@@ -45,39 +43,33 @@ def detail(request, thread_id):
     # if will run when username is submitted in form
     if request.method == 'GET' and 'fname' in request.GET:
         username_filter = request.GET.get('fname')
-
-        # posts should be changed to post_list. This section is interim until i figure out pagination
-        posts = Posts.objects.filter(thread_id=thread_id).filter(username=username_filter).order_by('date_time')
+        replies = Posts.objects.filter(thread_id=thread_id).filter(username=username_filter).order_by('date_time')
         thread_info = Threads.objects.get(thread_id=thread_id)
-        context = {'posts': posts, 'thread_info': thread_info}
+        context = {'replies': replies, 'thread_info': thread_info}
         return render(request, 'forum/detail.html', context)
     else:  # get the replies from the thread
-        post_list = Posts.objects.filter(thread_id=thread_id).order_by('date_time')
-
+        replies_list = Posts.objects.filter(thread_id=thread_id).order_by('date_time')
     # get data for the thread so that you can display information for it in charts.html
     thread_info = Threads.objects.get(thread_id=thread_id)
-
     # get the page number from the URL
     page_number = request.GET.get('page', 1)
-
     # https://www.geeksforgeeks.org/how-to-add-pagination-in-django-project/
     # paginator takes list of objects as first argument, and number of pages for second
-    paginator = Paginator(post_list, 49)
+    paginator = Paginator(replies_list, 49)
     # will use this to prevent every page number from showing in pagination. Will only get numbers on either side of
     # current page
     # https: // docs.djangoproject.com / en / 3.2 / ref / paginator /  # django.core.paginator.Paginator.get_elided_page_range
     # https://nemecek.be/blog/105/how-to-use-elided-pagination-in-django-and-solve-too-many-pages-problem
     pagination_page_range = paginator.get_elided_page_range(number=page_number)
-
     try:
-        posts = paginator.get_page(page_number)  # returns the desired page object
+        replies = paginator.get_page(page_number)  # returns the desired page object
     except PageNotAnInteger:
         # if page_number is not an integer then assign the first page
-        posts = paginator.page(1)
+        replies = paginator.page(1)
     except EmptyPage:
         # if page is empty then return the last page
-        posts = page_number.page(paginator.num_pages)
-    context = {'pagination_page_range': pagination_page_range, 'posts': posts, 'thread_info': thread_info}
+        replies = page_number.page(paginator.num_pages)
+    context = {'pagination_page_range': pagination_page_range, 'replies': replies, 'thread_info': thread_info}
     return render(request, 'forum/detail.html', context)
 
 
