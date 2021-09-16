@@ -8,8 +8,8 @@ from .models import Threads
 
 class ForumModelTests(TestCase):
     def test_was_created_recently_with_future_thread(self):
-        """ was_created_recently() returns False for threads whose pub_date
-        is in the future. """
+        """ was_created_recently() returns False for threads whose created date
+        are in the future. """
         time = timezone.now() + datetime.timedelta(days=30)
         future_thread = Threads(date_time=time)
         self.assertIs(future_thread.was_created_recently(), False)
