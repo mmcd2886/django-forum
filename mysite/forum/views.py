@@ -302,7 +302,7 @@ def users(request):
 
 def watch_update(request, thread_id):
     # watch-2 will be submitted from the watching page and 'watch' will be submitted from the index page
-    # this will update whether a page is being watched by updating wathc_list='yes' or 'no' in db
+    # this will update whether a page is being watched by updating watch_list='yes' or 'no' in db
     if 'watch-2' in request.POST:
         icon_submit_yes_no = request.POST.get("watch-2")
         thread = get_object_or_404(Threads, pk=thread_id)
