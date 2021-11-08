@@ -169,6 +169,7 @@ def pie_chart(request, thread_id):
     total_replies_datetime_bar_chart_data = total_replies_datetime_df["total replies"].tolist()
 
     # find the average sentiment score for each day
+    replies_from_thread_df['score'] = pd.to_numeric(replies_from_thread_df['score'])
     daily_sentiment_average_df = replies_from_thread_df.set_index("date_time").groupby(pd.Grouper(freq='D'))[
         'score'].mean(). \
         reset_index(name='average score')

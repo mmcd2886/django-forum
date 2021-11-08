@@ -32,7 +32,6 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'bootstrap4',
-    'bootstrap_datepicker_plus',
     'forum.apps.ForumConfig',
     'django.contrib.admin',
     'django.contrib.auth',
